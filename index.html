@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sapphire Quest - Pro Invoice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .brand-blue {
+            background-color: #0755DB;
+        }
+
+        .text-brand-blue {
+            color: #0755DB;
+        }
+
+        #invoice-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            min-height: 1100px;
+            overflow: hidden;
+        }
+
+        /* HIDDEN BY DEFAULT FOR SECURITY */
+        #main-app,
+        #toolbar-app {
+            display: none;
+        }
+
+        /* SECURITY MODAL STYLES */
+        #security-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #0755DB 0%, #043996 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lock-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+        }
+
+        .pass-input {
+            letter-spacing: 0.5em;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            border-bottom: 3px solid #e5e7eb;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .pass-input:focus {
+            border-color: #0755DB;
+        }
+
+        .error-shake {
+            animation: shake 0.4s;
+            border-color: #ef4444 !important;
+            color: #ef4444;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        /* WATERMARK */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 8rem;
+            font-weight: 900;
+            color: rgba(0, 0, 0, 0.03);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            text-transform: uppercase;
+        }
+
+        .pill-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        input,
+        textarea {
+            outline: none;
+            border: none;
+            background: transparent;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        textarea {
+            resize: none;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            #invoice-wrapper {
+                transform: scale(0.95);
+                transform-origin: top center;
+            }
+
+            .mobile-stack {
+                flex-direction: column !important;
+                gap: 1rem;
+            }
+
+            .mobile-full {
+                width: 100% !important;
+            }
+        }
+
+        .row-tint {
+            background-color: #F8FAFF;
+        }
+
+        .border-heavy {
+            border: 2px solid #000;
+        }
+    </style>
+</head>
+
+<body class="py-4 md:py-10">
+
+    <!-- LOCK OVERLAY -->
+    <div id="security-overlay">
+        <div class="lock-card">
+            <!-- Keep icon + add Logo after it (do not remove what was there) -->
+            <div class="flex items-center justify-center gap-3 mx-auto mb-4">
+                <div class="brand-blue w-16 h-16 rounded-full pill-center">
+                    <i class="fa-solid fa-lock text-white text-2xl"></i>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <!-- <span class="text-[11px] font-black text-gray-500 leading-none mb-1">Logo</span> -->
+                    <img src="SapphireQuest.png" alt="Company Logo" class="h-12 object-contain">
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black text-gray-800 mb-2">Access Portal</h2>
+            <p class="text-gray-500 text-sm mb-8">Enter the secure 4-digit code to open the Sapphire Quest Invoice
+                System.</p>
+
+            <input type="password" id="accessCode" maxlength="4" inputmode="numeric" autocomplete="off"
+                placeholder="****" class="pass-input">
+
+            <button id="unlockBtn" onclick="verifyCode()"
+                class="brand-blue text-white w-full py-4 rounded-xl font-bold text-lg shadow-lg hover:brightness-110 transition">
+                UNLOCK SYSTEM
+            </button>
+
+            <p id="error-text" class="text-red-500 text-xs font-bold mt-4 opacity-0">INCORRECT CODE. ACCESS DENIED.</p>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div id="toolbar-app"
+        class="max-w-[850px] mx-auto mb-6 flex flex-wrap justify-between items-center bg-white p-4 rounded-xl shadow-sm gap-4">
+        <!-- LEFT ACTIONS (Add Row / Remove / Clear Invoice) -->
+        <div class="flex gap-2 flex-wrap">
+            <button onclick="addRow()"
+                class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg font-bold hover:bg-blue-100 transition">
+                <i class="fa-solid fa-plus mr-2"></i>Add Row
+            </button>
+            <button onclick="removeRow()"
+                class="bg-red-50 text-red-700 px-4 py-2 rounded-lg font-bold hover:bg-red-100 transition">
+                <i class="fa-solid fa-trash mr-2"></i>Remove
+            </button>
+            <button onclick="clearInvoice()"
+                class="bg-gray-50 text-gray-800 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition border border-gray-200">
+                <i class="fa-solid fa-eraser mr-2"></i>Clear Invoice
+            </button>
+        </div>
+
+        <!-- RIGHT ACTIONS (Lock / PDF / PNG) -->
+        <div class="flex gap-2">
+            <button onclick="lockSystem('manual')"
+                class="bg-white border border-gray-300 text-gray-900 px-6 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-50 transition">
+                <i class="fa-solid fa-lock mr-2"></i>Lock
+            </button>
+
+            <button onclick="exportInvoice('pdf')"
+                class="brand-blue text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:opacity-90 transition">
+                Generate PDF
+            </button>
+
+            <button onclick="exportInvoice('png')"
+                class="bg-gray-800 text-white px-6 py-2 rounded-lg font-bold shadow-lg">
+                PNG
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="main-app">
+        <div id="invoice-wrapper" class="shadow-2xl flex flex-col p-4 md:p-10">
+            <div class="watermark">OFFICIAL INVOICE</div>
+
+            <div class="flex mobile-stack justify-between items-start mb-8 relative z-10">
+                <div class="mobile-full text-center md:text-left">
+                    <img src="SapphireQuest.png" alt="Logo" class="h-20 md:h-28 object-contain mx-auto md:mx-0">
+                </div>
+                <div class="brand-blue rounded-full w-full md:w-[380px] h-32 pill-center mobile-full">
+                    <h1 class="text-white text-5xl md:text-6xl font-bold tracking-widest mt-[-38px]">INVOICE</h1>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-between items-center border-b pb-6 mb-8 gap-2 px-2 relative z-10">
+                <div class="flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
+                    <input value="09162974349" class="font-bold text-gray-800 w-32">
+                </div>
+                <div class="flex items-center gap-1">
+                    <i class="fa-brands fa-instagram text-pink-600"></i>
+                    <i class="fa-brands fa-facebook text-blue-600"></i>
+                    <input value="sapphirequesttravel" class="font-bold text-gray-800 w-40">
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-envelope text-red-500"></i>
+                    <input value="info@sapphirequesttravel.com"
+                        class="font-bold text-gray-800 w-60 text-right mobile-full">
+                </div>
+            </div>
+
+            <div class="flex mobile-stack justify-between gap-10 mb-10 relative z-10">
+                <div class="flex-grow space-y-4">
+                    <div class="flex border-b-2 border-gray-300 pb-1 items-center">
+                        <span class="w-24 text-gray-500 font-bold text-sm">Name:</span>
+                        <input id="clientName" class="font-bold text-lg" placeholder="Client Name">
+                    </div>
+                    <div class="flex border-b-2 border-gray-300 pb-1 items-center">
+                        <span class="w-24 text-gray-500 font-bold text-sm">Telephone:</span>
+                        <input id="clientPhone" class="font-bold text-lg" placeholder="Phone">
+                    </div>
+                    <div class="flex border-b-2 border-gray-300 pb-1 items-center">
+                        <span class="w-24 text-gray-500 font-bold text-sm">Address:</span>
+                        <input id="clientAddress" class="font-bold text-lg" placeholder="Address">
+                    </div>
+                </div>
+
+                <div class="w-full md:w-72 border-heavy">
+                    <div class="flex bg-black text-white p-3 font-black text-sm">
+                        <span class="flex-grow uppercase">Invoice No:</span>
+                        <input id="invoiceNo" value="2025/01/0028" class="text-right text-white w-28">
+                    </div>
+                    <div class="p-2">
+                        <p class="text-[10px] font-black mb-1">DATE:</p>
+                        <div class="grid grid-cols-3 text-center border-t border-black pt-2">
+                            <div class="border-r border-black">
+                                <p class="text-[9px] text-gray-400">DAY</p><input id="invDay" value="12"
+                                    class="text-center font-black">
+                            </div>
+                            <div class="border-r border-black">
+                                <p class="text-[9px] text-gray-400">MONTH</p><input id="invMonth" value="JAN"
+                                    class="text-center font-black uppercase">
+                            </div>
+                            <div>
+                                <p class="text-[9px] text-gray-400">YEAR</p><input id="invYear" value="2025"
+                                    class="text-center font-black">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-grow relative z-10">
+                <table class="w-full border-heavy border-collapse" id="main-table">
+                    <thead>
+                        <tr class="brand-blue text-white text-xs md:text-sm uppercase font-black">
+                            <th class="border-r border-white/30 p-4 w-16">S/N</th>
+                            <th class="border-r border-white/30 p-4">Service Description</th>
+                            <th class="border-r border-white/30 p-4 w-48">Price Description</th>
+                            <th class="p-4 w-40">Total (#)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invoice-rows">
+                        <tr class="border-t-2 border-black">
+                            <td
+                                class="border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">
+                                1</td>
+                            <td class="border-r-2 border-black p-3">
+                                <textarea class="font-serif text-lg leading-snug" rows="2">Service Name</textarea>
+                            </td>
+                            <td class="border-r-2 border-black p-3">
+                                <textarea class="font-serif text-sm italic" rows="2">Short description</textarea>
+                            </td>
+                            <td class="p-3 align-top">
+                                <input value="0" class="text-right text-2xl font-black item-total"
+                                    oninput="updateTotal()">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-12 mb-10 flex mobile-stack justify-between items-end relative z-10">
+                <div class="flex flex-col gap-4 items-start">
+                    <div class="border-heavy rounded-full px-12 py-6 pill-center mobile-full">
+                        <span class="text-3xl font-black italic tracking-tighter mt-[-28px]">THANK YOU</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 ml-4">
+                        <i class="fa-solid fa-shield-halved text-green-600"></i>
+                        <span>VERIFIED & SECURED DOCUMENT</span>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-80 border border-gray-200 shadow-sm bg-white/80 backdrop-blur-sm">
+                    <div class="flex justify-between p-3 row-tint border-b border-gray-200">
+                        <span class="font-bold text-gray-600">Sub Total:</span>
+                        <span class="font-black text-lg" id="sub-total">#0</span>
+                    </div>
+                    <div class="flex justify-between p-3 border-b border-gray-200 items-center">
+                        <span class="font-bold text-gray-600">Discount (%):</span>
+                        <input type="number" id="discount-perc" value="0" class="text-right w-20 font-black"
+                            oninput="updateTotal()">
+                    </div>
+                    <div class="flex justify-between p-3 border-b border-gray-200 items-center">
+                        <span class="font-bold text-gray-600">Tax (%):</span>
+                        <input type="number" id="tax-perc" value="0" class="text-right w-20 font-black"
+                            oninput="updateTotal()">
+                    </div>
+                    <div class="flex justify-between p-4 bg-white">
+                        <span class="font-black brand-blue text-white px-2 py-1 rounded">TOTAL:</span>
+                        <span class="font-black text-2xl" id="grand-total">#0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="brand-blue p-8 -mx-10 -mb-10 flex justify-center mt-10 relative z-10">
+                <div class="bg-white rounded-full px-8 py-2 flex items-center gap-3 border-2 border-blue-200">
+                    <i class="fa-solid fa-globe text-brand-blue mt-[-15px]"></i>
+                    <input value="sapphirequesttravel.com"
+                        class="font-black text-center w-64 uppercase tracking-widest text-sm mt-[-15px]">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        "use strict";
+
+        // =========================
+        // SECURITY (NO PLAINTEXT PIN)
+        // =========================
+        const passInput = document.getElementById('accessCode');
+        const errorText = document.getElementById('error-text');
+        const unlockBtn = document.getElementById('unlockBtn');
+
+        const EXPECTED_HASH = [
+            "614cb3fc", "60cb6dc1", "83a042b4", "603f2a88",
+            "d5c7fdf4", "ec626f13", "b8e5121a", "f01f09ea"
+        ].join("");
+
+        let isUnlocked = false;
+        let failedAttempts = 0;
+        let lockoutUntil = 0;
+
+        function showError(msg) {
+            errorText.textContent = msg;
+            errorText.style.opacity = '1';
+            passInput.classList.add('error-shake');
+
+            setTimeout(() => {
+                passInput.classList.remove('error-shake');
+            }, 500);
+        }
+
+        function clearError() {
+            errorText.style.opacity = '0';
+            errorText.textContent = "INCORRECT CODE. ACCESS DENIED.";
+        }
+
+        function setLockout(ms) {
+            lockoutUntil = Date.now() + ms;
+            unlockBtn.disabled = true;
+            unlockBtn.classList.add("opacity-60", "cursor-not-allowed");
+
+            const tick = setInterval(() => {
+                const remaining = Math.max(0, lockoutUntil - Date.now());
+                if (remaining <= 0) {
+                    clearInterval(tick);
+                    unlockBtn.disabled = false;
+                    unlockBtn.classList.remove("opacity-60", "cursor-not-allowed");
+                    clearError();
+                } else {
+                    showError(`TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(remaining / 1000)}s.`);
+                }
+            }, 500);
+        }
+
+        async function sha256Hex(str) {
+            const enc = new TextEncoder().encode(str);
+            const buf = await crypto.subtle.digest("SHA-256", enc);
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        function timingSafeEqual(a, b) {
+            if (a.length !== b.length) return false;
+            let diff = 0;
+            for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+            return diff === 0;
+        }
+
+        async function verifyCode() {
+            resetInactivityTimer(); // count this as activity
+
+            if (Date.now() < lockoutUntil) return;
+
+            const code = (passInput.value || "").trim();
+
+            if (!/^\d{4}$/.test(code)) {
+                showError("ENTER A VALID 4-DIGIT CODE.");
+                passInput.value = "";
+                return;
+            }
+
+            const hashed = await sha256Hex(code);
+            const ok = timingSafeEqual(hashed, EXPECTED_HASH);
+
+            if (ok) {
+                unlockSystem();
+            } else {
+                failedAttempts += 1;
+                showError("INCORRECT CODE. ACCESS DENIED.");
+                passInput.value = "";
+
+                // basic throttle
+                if (failedAttempts >= 5) {
+                    failedAttempts = 0;
+                    setLockout(30_000); // 30 seconds
+                }
+            }
+        }
+
+        passInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') verifyCode();
+        });
+
+        function unlockSystem() {
+            isUnlocked = true;
+            failedAttempts = 0;
+            clearError();
+
+            document.getElementById('security-overlay').style.display = 'none';
+            document.getElementById('toolbar-app').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'block';
+
+            // Auto date + auto invoice number (does not change design)
+            ensureInvoiceMetaOnUnlock();
+
+            updateTotal();
+            resetInactivityTimer();
+        }
+
+        function lockSystem(reason = "manual") {
+            isUnlocked = false;
+
+            document.getElementById('security-overlay').style.display = 'flex';
+            document.getElementById('toolbar-app').style.display = 'none';
+            document.getElementById('main-app').style.display = 'none';
+
+            passInput.value = "";
+            clearError();
+
+            // optional: subtle message change if inactivity
+            if (reason === "inactivity") {
+                showError("AUTO-LOCKED DUE TO INACTIVITY. ENTER CODE TO CONTINUE.");
+            }
+
+            clearInactivityTimer();
+            // focus after overlay is visible
+            setTimeout(() => passInput.focus(), 50);
+        }
+
+        // =========================
+        // AUTO-LOCK (2 MIN INACTIVITY)
+        // =========================
+        const INACTIVITY_MS = 2 * 60 * 1000;
+        let inactivityTimer = null;
+
+        function clearInactivityTimer() {
+            if (inactivityTimer) clearTimeout(inactivityTimer);
+            inactivityTimer = null;
+        }
+
+        function resetInactivityTimer() {
+            if (!isUnlocked) return;
+            clearInactivityTimer();
+            inactivityTimer = setTimeout(() => lockSystem("inactivity"), INACTIVITY_MS);
+        }
+
+        // Activity listeners (mouse + keyboard + touch + scroll)
+        ["mousemove", "mousedown", "keydown", "touchstart", "touchmove", "scroll", "click"].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer, { passive: true });
+        });
+
+        // =========================
+        // AUTO DATE + AUTO INVOICE NO
+        // Format: YYYY/MM/NNNN
+        // Counter resets per month (0001..), continues for that month
+        // =========================
+        const MONTHS_3 = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+        const invoiceNoEl = document.getElementById("invoiceNo");
+        const invDayEl = document.getElementById("invDay");
+        const invMonthEl = document.getElementById("invMonth");
+        const invYearEl = document.getElementById("invYear");
+
+        let dateManuallyEdited = false;
+        let invoiceNoManuallyEdited = false;
+
+        function pad2(n) { return String(n).padStart(2, "0"); }
+        function pad4(n) { return String(n).padStart(4, "0"); }
+
+        function getDisplayedDate() {
+            const now = new Date();
+            const y = parseInt(invYearEl?.value, 10);
+            const d = parseInt(invDayEl?.value, 10);
+            const m3 = (invMonthEl?.value || "").toUpperCase().trim();
+            const mIndex = MONTHS_3.indexOf(m3);
+
+            if (!Number.isFinite(y) || !Number.isFinite(d) || mIndex < 0) return now;
+            const dt = new Date(y, mIndex, d);
+            if (isNaN(dt.getTime())) return now;
+            return dt;
+        }
+
+        function setDateToToday({ force = false } = {}) {
+            if (!invDayEl || !invMonthEl || !invYearEl) return;
+            if (!force && dateManuallyEdited) return;
+
+            const now = new Date();
+            invDayEl.value = String(now.getDate());
+            invMonthEl.value = MONTHS_3[now.getMonth()];
+            invYearEl.value = String(now.getFullYear());
+        }
+
+        function counterKeyFor(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = pad2(dateObj.getMonth() + 1);
+            return `sq_invoice_counter_${y}_${m}`; // per month
+        }
+
+        function readCounter(dateObj) {
+            const key = counterKeyFor(dateObj);
+            const raw = localStorage.getItem(key);
+            const num = parseInt(raw, 10);
+            return Number.isFinite(num) && num >= 0 ? num : 0;
+        }
+
+        function writeCounter(dateObj, value) {
+            const key = counterKeyFor(dateObj);
+            localStorage.setItem(key, String(value));
+        }
+
+        function formatInvoiceNo(dateObj, seqNum) {
+            const y = dateObj.getFullYear();
+            const m = pad2(dateObj.getMonth() + 1);
+            const seq = pad4(seqNum);
+            return `${y}/${m}/${seq}`;
+        }
+
+        function issueNewInvoiceNumber({ force = false } = {}) {
+            if (!invoiceNoEl) return;
+            if (!force && invoiceNoManuallyEdited) return;
+
+            const dt = getDisplayedDate();
+            const current = readCounter(dt);
+            const next = current + 1;
+
+            writeCounter(dt, next);
+            invoiceNoEl.value = formatInvoiceNo(dt, next);
+        }
+
+        function ensureInvoiceMetaOnUnlock() {
+            setDateToToday({ force: false });
+
+            const hasInvoice = (invoiceNoEl?.value || "").trim().length > 0;
+            if (!hasInvoice) {
+                issueNewInvoiceNumber({ force: true });
+            }
+
+            // if the existing invoiceNo is an old default, replace it with the next for this month (first unlock only)
+            // This keeps your UI unchanged but makes invoice number “auto” in practice.
+            if (!invoiceNoManuallyEdited && invoiceNoEl && invoiceNoEl.value.trim() === "2025/01/0028") {
+                issueNewInvoiceNumber({ force: true });
+            }
+        }
+
+        // Mark manual edits so we don't overwrite user choices
+        if (invDayEl) invDayEl.addEventListener("input", () => { dateManuallyEdited = true; });
+        if (invMonthEl) invMonthEl.addEventListener("input", () => { dateManuallyEdited = true; });
+        if (invYearEl) invYearEl.addEventListener("input", () => { dateManuallyEdited = true; });
+
+        if (invoiceNoEl) invoiceNoEl.addEventListener("input", () => { invoiceNoManuallyEdited = true; });
+
+        function updateInvoiceNoPreviewFromDate() {
+            if (!invoiceNoEl) return;
+            if (invoiceNoManuallyEdited) return;
+
+            const dt = getDisplayedDate();
+            const current = readCounter(dt);
+            const previewSeq = Math.max(1, current + 1);
+            invoiceNoEl.value = formatInvoiceNo(dt, previewSeq);
+        }
+
+        if (invDayEl) invDayEl.addEventListener("change", updateInvoiceNoPreviewFromDate);
+        if (invMonthEl) invMonthEl.addEventListener("change", updateInvoiceNoPreviewFromDate);
+        if (invYearEl) invYearEl.addEventListener("change", updateInvoiceNoPreviewFromDate);
+
+        // =========================
+        // INVOICE LOGIC
+        // =========================
+        function addRow() {
+            resetInactivityTimer();
+
+            const tbody = document.getElementById('invoice-rows');
+            const rowCount = tbody.children.length + 1;
+            const tr = document.createElement('tr');
+            tr.className = `border-t-2 border-black ${rowCount % 2 === 0 ? 'row-tint' : ''}`;
+            tr.innerHTML = `
+                <td class="border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">${rowCount}</td>
+                <td class="border-r-2 border-black p-3"><textarea class="font-serif text-lg leading-snug" rows="2"></textarea></td>
+                <td class="border-r-2 border-black p-3"><textarea class="font-serif text-sm italic" rows="2"></textarea></td>
+                <td class="p-3 align-top"><input value="0" class="text-right text-2xl font-black item-total" oninput="updateTotal()"></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeRow() {
+            resetInactivityTimer();
+
+            const tbody = document.getElementById('invoice-rows');
+            if (tbody.children.length > 1) tbody.removeChild(tbody.lastElementChild);
+            updateTotal();
+        }
+
+        function updateTotal() {
+            let subtotal = 0;
+            document.querySelectorAll('.item-total').forEach(input => {
+                let val = (input.value || "").toString().replace(/,/g, '');
+                subtotal += parseFloat(val) || 0;
+            });
+
+            const discountPerc = parseFloat(document.getElementById('discount-perc').value) || 0;
+            const taxPerc = parseFloat(document.getElementById('tax-perc').value) || 0;
+
+            const discountAmount = subtotal * (discountPerc / 100);
+            const subAfterDiscount = subtotal - discountAmount;
+            const taxAmount = subAfterDiscount * (taxPerc / 100);
+            const total = subAfterDiscount + taxAmount;
+
+            document.getElementById('sub-total').innerText = '#' + subtotal.toLocaleString();
+            document.getElementById('grand-total').innerText = '#' + total.toLocaleString();
+        }
+
+        // =========================
+        // CLEAR INVOICE (keeps design)
+        // - Clears client fields, rows reset to 1, discount/tax reset
+        // - Sets today's date
+        // - Issues next invoice number for current month (0001..)
+        // =========================
+        function clearInvoice() {
+            resetInactivityTimer();
+
+            const nameEl = document.getElementById("clientName");
+            const phoneEl = document.getElementById("clientPhone");
+            const addrEl = document.getElementById("clientAddress");
+
+            if (nameEl) nameEl.value = "";
+            if (phoneEl) phoneEl.value = "";
+            if (addrEl) addrEl.value = "";
+
+            const discountEl = document.getElementById("discount-perc");
+            const taxEl = document.getElementById("tax-perc");
+            if (discountEl) discountEl.value = 0;
+            if (taxEl) taxEl.value = 0;
+
+            const tbody = document.getElementById("invoice-rows");
+            if (tbody) {
+                while (tbody.children.length > 0) tbody.removeChild(tbody.lastElementChild);
+
+                const tr = document.createElement("tr");
+                tr.className = "border-t-2 border-black";
+                tr.innerHTML = `
+                    <td class="border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">1</td>
+                    <td class="border-r-2 border-black p-3">
+                        <textarea class="font-serif text-lg leading-snug" rows="2">Service Name</textarea>
+                    </td>
+                    <td class="border-r-2 border-black p-3">
+                        <textarea class="font-serif text-sm italic" rows="2">Short description</textarea>
+                    </td>
+                    <td class="p-3 align-top">
+                        <input value="0" class="text-right text-2xl font-black item-total" oninput="updateTotal()">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            // re-enable auto management
+            dateManuallyEdited = false;
+            invoiceNoManuallyEdited = false;
+
+            setDateToToday({ force: true });
+            issueNewInvoiceNumber({ force: true });
+
+            updateTotal();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        // small export reliability improvements WITHOUT changing design/output:
+        async function waitForImages(rootEl) {
+            const imgs = Array.from(rootEl.querySelectorAll("img"));
+            await Promise.all(imgs.map(img => {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+                return new Promise(resolve => {
+                    const done = () => resolve();
+                    img.addEventListener("load", done, { once: true });
+                    img.addEventListener("error", done, { once: true });
+                });
+            }));
+        }
+
+        async function exportInvoice(format) {
+            resetInactivityTimer();
+
+            const element = document.getElementById('invoice-wrapper');
+            const inputs = element.querySelectorAll('input, textarea');
+            const replacements = [];
+
+            // ensure fonts/images are ready for accurate capture
+            if (document.fonts && document.fonts.ready) {
+                try { await document.fonts.ready; } catch (_) { }
+            }
+            await waitForImages(element);
+
+            inputs.forEach(input => {
+                const span = document.createElement('span');
+                let displayValue = input.value;
+                if (input.type === 'number') displayValue += '%';
+                span.innerText = displayValue;
+                span.className = input.className + " block";
+                span.style.minHeight = "1.2em";
+                replacements.push({ el: input, span: span });
+                input.style.display = 'none';
+                input.parentNode.insertBefore(span, input);
+            });
+
+            const canvas = await html2canvas(element, {
+                scale: 3,
+                useCORS: true,
+                backgroundColor: "#ffffff",
+                windowWidth: 850,
+                scrollX: -window.scrollX,
+                scrollY: -window.scrollY
+            });
+
+            replacements.forEach(item => {
+                item.span.remove();
+                item.el.style.display = 'block';
+            });
+
+            if (format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgData = canvas.toDataURL('image/png');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('Sapphire_Quest_Invoice.pdf');
+            } else {
+                const link = document.createElement('a');
+                link.download = 'Invoice.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+
+        // Focus PIN on load
+        window.addEventListener("load", () => {
+            setTimeout(() => passInput.focus(), 100);
+        });
+    </script>
+</body>
+
+</html>
