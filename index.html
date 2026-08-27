@@ -65,6 +65,10 @@
         }
 
         .pass-input {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             letter-spacing: 0.5em;
             text-align: center;
             font-size: 2rem;
@@ -221,7 +225,6 @@
             </div>
 
             <h2 class="text-2xl font-black text-gray-800 mb-2">Access Portal</h2>
-
             <p class="text-gray-500 text-sm mb-8">
                 Enter the secure 4-digit code to open the Sapphire Quest Invoice System.
             </p>
@@ -266,14 +269,9 @@
         </div>
 
         <div class="flex gap-2 flex-wrap items-center">
-
             <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg">
                 <i class="fa-solid fa-money-bill-wave text-brand-blue"></i>
-
-                <label for="currencySelect" class="text-xs font-black text-gray-500 uppercase">
-                    Currency
-                </label>
-
+                <label for="currencySelect" class="text-xs font-black text-gray-500 uppercase">Currency</label>
                 <select id="currencySelect" onchange="changeCurrency()"
                     class="bg-transparent font-bold text-gray-800 cursor-pointer">
                     <option value="NGN">NGN ₦</option>
@@ -303,45 +301,33 @@
     <!-- MAIN APP -->
     <div id="main-app">
         <div id="invoice-wrapper" class="shadow-2xl flex flex-col p-4 md:p-10">
-
             <div class="watermark">OFFICIAL INVOICE</div>
 
-            <!-- HEADER -->
             <div class="flex mobile-stack justify-between items-start mb-8 relative z-10">
-
                 <div class="mobile-full text-center md:text-left">
                     <img src="SapphireQuest.png" alt="Logo" class="h-20 md:h-28 object-contain mx-auto md:mx-0">
                 </div>
 
                 <div class="brand-blue rounded-full w-full md:w-[380px] h-32 pill-center mobile-full">
-                    <h1 class="text-white text-5xl md:text-6xl font-bold tracking-widest mt-[-38px]">
-                        INVOICE
-                    </h1>
+                    <h1 class="text-white text-5xl md:text-6xl font-bold tracking-widest mt-[-38px]">INVOICE</h1>
                 </div>
             </div>
 
             <!-- FIXED COMPANY DETAILS -->
             <div class="flex flex-wrap justify-between items-center border-b pb-6 mb-8 gap-2 px-2 relative z-10">
-
                 <div class="flex items-center gap-2">
                     <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
-                    <span class="static-company-info font-bold text-gray-800 w-32">
-                        09162974349
-                    </span>
+                    <span class="static-company-info font-bold text-gray-800 w-32">09162974349</span>
                 </div>
 
                 <div class="flex items-center gap-1">
                     <i class="fa-brands fa-instagram text-pink-600"></i>
                     <i class="fa-brands fa-facebook text-blue-600"></i>
-
-                    <span class="static-company-info font-bold text-gray-800 w-40">
-                        sapphirequesttravel
-                    </span>
+                    <span class="static-company-info font-bold text-gray-800 w-40">sapphirequesttravel</span>
                 </div>
 
                 <div class="flex items-center gap-2 mobile-full md:w-auto">
                     <i class="fa-solid fa-envelope text-red-500"></i>
-
                     <span class="static-company-info font-bold text-gray-800 md:w-60 md:text-right mobile-full">
                         info@sapphirequesttravel.com
                     </span>
@@ -350,73 +336,49 @@
 
             <!-- CLIENT + INVOICE META -->
             <div class="flex mobile-stack justify-between gap-10 mb-10 relative z-10">
-
                 <div class="flex-grow space-y-4">
-
                     <div class="flex border-b-2 border-gray-300 pb-1 items-center">
                         <span class="w-24 text-gray-500 font-bold text-sm">Name:</span>
-
                         <input id="clientName" class="font-bold text-lg" placeholder="Client Name" autocomplete="off">
                     </div>
 
                     <div class="flex border-b-2 border-gray-300 pb-1 items-center">
-                        <span class="w-24 text-gray-500 font-bold text-sm">
-                            Telephone:
-                        </span>
-
+                        <span class="w-24 text-gray-500 font-bold text-sm">Telephone:</span>
                         <input id="clientPhone" class="font-bold text-lg" placeholder="Phone" inputmode="tel"
                             autocomplete="off">
                     </div>
 
                     <div class="flex border-b-2 border-gray-300 pb-1 items-center">
-                        <span class="w-24 text-gray-500 font-bold text-sm">
-                            Address:
-                        </span>
-
+                        <span class="w-24 text-gray-500 font-bold text-sm">Address:</span>
                         <input id="clientAddress" class="font-bold text-lg" placeholder="Address" autocomplete="off">
                     </div>
-
                 </div>
 
                 <div class="w-full md:w-72 border-heavy">
-
                     <div class="flex bg-black text-white p-3 font-black text-sm">
-
-                        <span class="flex-grow uppercase">
-                            Invoice No:
-                        </span>
-
+                        <span class="flex-grow uppercase">Invoice No:</span>
                         <input id="invoiceNo" value="" class="text-right text-white w-32" spellcheck="false">
                     </div>
 
                     <div class="p-2">
-
-                        <p class="text-[10px] font-black mb-1">
-                            DATE:
-                        </p>
-
+                        <p class="text-[10px] font-black mb-1">DATE:</p>
                         <div class="grid grid-cols-3 text-center border-t border-black pt-2">
-
                             <div class="border-r border-black">
                                 <p class="text-[9px] text-gray-400">DAY</p>
-
                                 <input id="invDay" value="" inputmode="numeric" maxlength="2"
                                     class="text-center font-black">
                             </div>
 
                             <div class="border-r border-black">
                                 <p class="text-[9px] text-gray-400">MONTH</p>
-
                                 <input id="invMonth" value="" maxlength="3" class="text-center font-black uppercase">
                             </div>
 
                             <div>
                                 <p class="text-[9px] text-gray-400">YEAR</p>
-
                                 <input id="invYear" value="" inputmode="numeric" maxlength="4"
                                     class="text-center font-black">
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -424,286 +386,163 @@
 
             <!-- INVOICE TABLE -->
             <div class="flex-grow relative z-10">
-
                 <table class="w-full border-heavy border-collapse" id="main-table">
                     <thead>
                         <tr class="brand-blue text-white text-xs md:text-sm uppercase font-black">
-
-                            <th class="border-r border-white/30 p-4 w-16">
-                                S/N
-                            </th>
-
-                            <th class="border-r border-white/30 p-4">
-                                Service Description
-                            </th>
-
-                            <th class="border-r border-white/30 p-4 w-48">
-                                Price Description
-                            </th>
-
-                            <th class="p-4 w-40">
-                                Total (<span id="currency-symbol-header">₦</span>)
-                            </th>
-
+                            <th class="border-r border-white/30 p-4 w-16">S/N</th>
+                            <th class="border-r border-white/30 p-4">Service Description</th>
+                            <th class="border-r border-white/30 p-4 w-48">Price Description</th>
+                            <th class="p-4 w-40">Total (<span id="currency-symbol-header">₦</span>)</th>
                         </tr>
                     </thead>
 
                     <tbody id="invoice-rows">
-
                         <tr class="border-t-2 border-black">
-
                             <td
                                 class="serial-cell border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">
-                                1
-                            </td>
-
+                                1</td>
                             <td class="border-r-2 border-black p-3">
-
                                 <textarea class="service-name font-serif text-lg leading-snug" rows="2"
                                     placeholder="Service Name"></textarea>
-
                             </td>
-
                             <td class="border-r-2 border-black p-3">
-
                                 <textarea class="service-description font-serif text-sm italic" rows="2"
                                     placeholder="Short description"></textarea>
-
                             </td>
-
                             <td class="p-3 align-top">
-
                                 <input value="0" inputmode="decimal" class="text-right text-2xl font-black item-total">
-
                             </td>
-
                         </tr>
-
                     </tbody>
                 </table>
             </div>
 
             <!-- OPTIONAL PAYMENT / NOTES -->
             <div id="extra-details-section" class="hidden mt-8 relative z-10">
-
                 <div class="grid md:grid-cols-2 gap-6 border border-gray-200 rounded-2xl p-5 bg-white/80">
-
                     <div>
-
                         <div class="flex items-center gap-2 mb-4">
                             <i class="fa-solid fa-building-columns text-brand-blue"></i>
-
-                            <h3 class="font-black text-gray-800 uppercase text-sm tracking-wide">
-                                Payment Details
-                            </h3>
+                            <h3 class="font-black text-gray-800 uppercase text-sm tracking-wide">Payment Details</h3>
                         </div>
 
                         <div class="space-y-3 text-sm">
-
                             <div class="flex gap-3 border-b border-gray-200 pb-2">
-                                <span class="w-28 font-bold text-gray-500">
-                                    Bank Name:
-                                </span>
-
+                                <span class="w-28 font-bold text-gray-500">Bank Name:</span>
                                 <input id="bankName" placeholder="Bank Name" class="font-bold text-gray-800">
                             </div>
-
                             <div class="flex gap-3 border-b border-gray-200 pb-2">
-                                <span class="w-28 font-bold text-gray-500">
-                                    Account Name:
-                                </span>
-
+                                <span class="w-28 font-bold text-gray-500">Account Name:</span>
                                 <input id="accountName" placeholder="Account Name" class="font-bold text-gray-800">
                             </div>
-
                             <div class="flex gap-3 border-b border-gray-200 pb-2">
-                                <span class="w-28 font-bold text-gray-500">
-                                    Account No:
-                                </span>
-
+                                <span class="w-28 font-bold text-gray-500">Account No:</span>
                                 <input id="accountNumber" placeholder="Account Number" inputmode="numeric"
                                     class="font-bold text-gray-800">
                             </div>
-
                         </div>
                     </div>
 
                     <div>
-
                         <div class="flex items-center gap-2 mb-4">
-
                             <i class="fa-solid fa-note-sticky text-brand-blue"></i>
-
-                            <h3 class="font-black text-gray-800 uppercase text-sm tracking-wide">
-                                Notes / Terms
-                            </h3>
-
+                            <h3 class="font-black text-gray-800 uppercase text-sm tracking-wide">Notes / Terms</h3>
                         </div>
-
                         <textarea id="invoiceNotes" rows="4"
                             placeholder="Add payment terms, validity, special notes or other invoice information..."
                             class="min-h-[110px] border border-gray-200 rounded-xl p-3 text-sm leading-relaxed bg-gray-50/70"></textarea>
-
                     </div>
-
                 </div>
             </div>
 
             <!-- TOTALS -->
             <div class="mt-12 mb-10 flex mobile-stack justify-between items-end relative z-10">
-
                 <div class="flex flex-col gap-4 items-start">
-
                     <div class="border-heavy rounded-full px-12 py-6 pill-center mobile-full">
-
-                        <span class="text-3xl font-black italic tracking-tighter mt-[-28px]">
-                            THANK YOU
-                        </span>
-
+                        <span class="text-3xl font-black italic tracking-tighter mt-[-28px]">THANK YOU</span>
                     </div>
 
                     <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 ml-4">
-
                         <i class="fa-solid fa-shield-halved text-green-600"></i>
-
-                        <span>
-                            VERIFIED & SECURED DOCUMENT
-                        </span>
-
+                        <span>VERIFIED & SECURED DOCUMENT</span>
                     </div>
-
                 </div>
 
                 <div class="w-full md:w-80 border border-gray-200 shadow-sm bg-white/80 backdrop-blur-sm">
-
                     <div class="flex justify-between p-3 row-tint border-b border-gray-200">
-
-                        <span class="font-bold text-gray-600">
-                            Sub Total:
-                        </span>
-
-                        <span class="font-black text-lg" id="sub-total">
-                            ₦0
-                        </span>
-
+                        <span class="font-bold text-gray-600">Sub Total:</span>
+                        <span class="font-black text-lg" id="sub-total">₦0</span>
                     </div>
 
                     <div class="flex justify-between p-3 border-b border-gray-200 items-center">
-
-                        <span class="font-bold text-gray-600">
-                            Discount (%):
-                        </span>
-
+                        <span class="font-bold text-gray-600">Discount (%):</span>
                         <input type="number" id="discount-perc" value="0" min="0" max="100" step="0.01"
                             class="text-right w-20 font-black percent-input">
-
                     </div>
 
                     <div class="flex justify-between p-3 border-b border-gray-200 items-center">
-
-                        <span class="font-bold text-gray-600">
-                            Tax (%):
-                        </span>
-
+                        <span class="font-bold text-gray-600">Tax (%):</span>
                         <input type="number" id="tax-perc" value="0" min="0" max="100" step="0.01"
                             class="text-right w-20 font-black percent-input">
-
                     </div>
 
                     <div class="flex justify-between p-4 bg-white">
-
-                        <span class="font-black brand-blue text-white px-2 py-1 rounded">
-                            TOTAL:
-                        </span>
-
-                        <span class="font-black text-2xl" id="grand-total">
-                            ₦0
-                        </span>
-
+                        <span class="font-black brand-blue text-white px-2 py-1 rounded">TOTAL:</span>
+                        <span class="font-black text-2xl" id="grand-total">₦0</span>
                     </div>
-
                 </div>
             </div>
 
             <!-- FIXED WEBSITE -->
             <div class="brand-blue p-8 -mx-10 -mb-10 flex justify-center mt-10 relative z-10">
-
                 <div class="bg-white rounded-full px-8 py-2 flex items-center gap-3 border-2 border-blue-200">
-
                     <i class="fa-solid fa-globe text-brand-blue mt-[-15px]"></i>
-
                     <span
                         class="static-company-info font-black text-center w-64 uppercase tracking-widest text-sm mt-[-15px]">
                         sapphirequesttravel.com
                     </span>
-
                 </div>
-
             </div>
-
         </div>
     </div>
 
     <!-- NEW INVOICE CONFIRMATION MODAL -->
     <div id="new-invoice-modal" class="modal-backdrop hidden">
-
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-
             <div class="flex items-start gap-4">
-
                 <div class="brand-blue w-12 h-12 rounded-full pill-center shrink-0">
                     <i class="fa-solid fa-file-circle-plus text-white text-lg"></i>
                 </div>
-
                 <div>
-
-                    <h3 class="text-xl font-black text-gray-900">
-                        Start a New Invoice?
-                    </h3>
-
+                    <h3 class="text-xl font-black text-gray-900">Start a New Invoice?</h3>
                     <p class="text-sm text-gray-500 mt-2 leading-relaxed">
-                        The current client, services, amounts and notes will be cleared.
-                        Your saved payment details and selected currency will remain available.
+                        The current client, services, amounts and notes will be cleared. Your saved payment details and
+                        selected currency will remain available.
                     </p>
-
                 </div>
-
             </div>
 
             <div class="flex justify-end gap-3 mt-6">
-
                 <button onclick="closeNewInvoiceModal()"
                     class="px-5 py-2.5 rounded-xl font-bold border border-gray-200 text-gray-700 hover:bg-gray-50">
                     Cancel
                 </button>
-
                 <button onclick="startNewInvoice()"
                     class="brand-blue text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:brightness-110">
                     Start New Invoice
                 </button>
-
             </div>
-
         </div>
     </div>
 
     <!-- EXPORT STATUS -->
     <div id="export-status" class="hidden">
-
         <div class="bg-white rounded-2xl shadow-2xl px-6 py-5 flex items-center gap-4">
-
             <i class="fa-solid fa-circle-notch fa-spin text-brand-blue text-2xl"></i>
-
             <div>
-                <p class="font-black text-gray-900" id="export-status-title">
-                    Generating document...
-                </p>
-
-                <p class="text-xs text-gray-500 mt-1">
-                    Please keep this page open until the download starts.
-                </p>
+                <p class="font-black text-gray-900" id="export-status-title">Generating document...</p>
+                <p class="text-xs text-gray-500 mt-1">Please keep this page open until the download starts.</p>
             </div>
-
         </div>
     </div>
 
@@ -713,7 +552,6 @@
         // =====================================================
         // STORAGE HELPERS
         // =====================================================
-
         const DRAFT_KEY = "sq_invoice_draft_v2";
         const BUSINESS_SETTINGS_KEY = "sq_business_settings_v1";
         const CURRENCY_KEY = "sq_currency";
@@ -741,11 +579,9 @@
             } catch (_) { }
         }
 
-
         // =====================================================
         // CORE DOM REFERENCES
         // =====================================================
-
         const passInput = document.getElementById("accessCode");
         const errorText = document.getElementById("error-text");
         const unlockBtn = document.getElementById("unlockBtn");
@@ -758,2601 +594,851 @@
         const clientNameEl = document.getElementById("clientName");
         const clientPhoneEl = document.getElementById("clientPhone");
         const clientAddressEl = document.getElementById("clientAddress");
-
         const discountEl = document.getElementById("discount-perc");
         const taxEl = document.getElementById("tax-perc");
         const notesEl = document.getElementById("invoiceNotes");
 
-
         // =====================================================
-        // SECURITY
+        // SECURITY (NO PLAINTEXT PIN)
         // =====================================================
-
         const EXPECTED_HASH = [
-            "614cb3fc",
-            "60cb6dc1",
-            "83a042b4",
-            "603f2a88",
-            "d5c7fdf4",
-            "ec626f13",
-            "b8e5121a",
-            "f01f09ea"
+            "614cb3fc", "60cb6dc1", "83a042b4", "603f2a88",
+            "d5c7fdf4", "ec626f13", "b8e5121a", "f01f09ea"
         ].join("");
 
         let isUnlocked = false;
         let failedAttempts = 0;
         let lockoutUntil = 0;
 
-
         function showError(msg, shake = true) {
-
             errorText.textContent = msg;
             errorText.style.opacity = "1";
 
             if (shake) {
-
                 passInput.classList.add("error-shake");
-
-                setTimeout(() => {
-                    passInput.classList.remove("error-shake");
-                }, 500);
-
+                setTimeout(() => passInput.classList.remove("error-shake"), 500);
             }
         }
 
-
         function clearError() {
-
             errorText.style.opacity = "0";
-
-            errorText.textContent =
-                "INCORRECT CODE. ACCESS DENIED.";
-
+            errorText.textContent = "INCORRECT CODE. ACCESS DENIED.";
         }
 
-
         function setLockout(ms) {
-
             lockoutUntil = Date.now() + ms;
-
             unlockBtn.disabled = true;
+            unlockBtn.classList.add("opacity-60", "cursor-not-allowed");
 
-            unlockBtn.classList.add(
-                "opacity-60",
-                "cursor-not-allowed"
-            );
-
-            showError(
-                `TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(ms / 1000)}s.`
-            );
+            showError(`TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(ms / 1000)}s.`);
 
             const tick = setInterval(() => {
-
-                const remaining =
-                    Math.max(
-                        0,
-                        lockoutUntil - Date.now()
-                    );
+                const remaining = Math.max(0, lockoutUntil - Date.now());
 
                 if (remaining <= 0) {
-
                     clearInterval(tick);
-
                     unlockBtn.disabled = false;
-
-                    unlockBtn.classList.remove(
-                        "opacity-60",
-                        "cursor-not-allowed"
-                    );
-
+                    unlockBtn.classList.remove("opacity-60", "cursor-not-allowed");
                     clearError();
-
                 } else {
-
-                    showError(
-                        `TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(remaining / 1000)}s.`,
-                        false
-                    );
-
+                    showError(`TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(remaining / 1000)}s.`, false);
                 }
-
             }, 500);
         }
 
-
         async function sha256Hex(str) {
-
-            if (
-                !window.crypto ||
-                !window.crypto.subtle
-            ) {
-
-                throw new Error(
-                    "Web Crypto is unavailable in this browser context."
-                );
-
+            if (!window.crypto || !window.crypto.subtle) {
+                throw new Error("Web Crypto is unavailable in this browser context.");
             }
 
-            const enc =
-                new TextEncoder()
-                    .encode(str);
+            const enc = new TextEncoder().encode(str);
+            const buf = await crypto.subtle.digest("SHA-256", enc);
 
-            const buf =
-                await crypto.subtle.digest(
-                    "SHA-256",
-                    enc
-                );
-
-            return Array
-                .from(
-                    new Uint8Array(buf)
-                )
-                .map(
-                    byte =>
-                        byte
-                            .toString(16)
-                            .padStart(2, "0")
-                )
+            return Array.from(new Uint8Array(buf))
+                .map(byte => byte.toString(16).padStart(2, "0"))
                 .join("");
         }
 
-
         function timingSafeEqual(a, b) {
-
-            if (a.length !== b.length) {
-                return false;
-            }
+            if (a.length !== b.length) return false;
 
             let diff = 0;
-
-            for (
-                let i = 0;
-                i < a.length;
-                i++
-            ) {
-
-                diff |=
-                    a.charCodeAt(i) ^
-                    b.charCodeAt(i);
-
+            for (let i = 0; i < a.length; i++) {
+                diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
             }
-
             return diff === 0;
         }
 
-
         async function verifyCode() {
+            if (Date.now() < lockoutUntil) return;
 
-            if (
-                Date.now() <
-                lockoutUntil
-            ) {
-                return;
-            }
+            const code = (passInput.value || "").trim();
 
-            const code =
-                (passInput.value || "")
-                    .trim();
-
-            if (
-                !/^\d{4}$/.test(code)
-            ) {
-
-                showError(
-                    "ENTER A VALID 4-DIGIT CODE."
-                );
-
+            if (!/^\d{4}$/.test(code)) {
+                showError("ENTER A VALID 4-DIGIT CODE.");
                 passInput.value = "";
-
                 return;
             }
 
             try {
-
-                const hashed =
-                    await sha256Hex(code);
-
-                const ok =
-                    timingSafeEqual(
-                        hashed,
-                        EXPECTED_HASH
-                    );
+                const hashed = await sha256Hex(code);
+                const ok = timingSafeEqual(hashed, EXPECTED_HASH);
 
                 if (ok) {
-
                     unlockSystem();
-
                 } else {
-
                     failedAttempts += 1;
-
-                    showError(
-                        "INCORRECT CODE. ACCESS DENIED."
-                    );
-
+                    showError("INCORRECT CODE. ACCESS DENIED.");
                     passInput.value = "";
 
-                    if (
-                        failedAttempts >= 5
-                    ) {
-
+                    if (failedAttempts >= 5) {
                         failedAttempts = 0;
-
-                        setLockout(
-                            30_000
-                        );
-
+                        setLockout(30_000);
                     }
                 }
-
             } catch (_) {
-
-                showError(
-                    "SECURE LOGIN REQUIRES HTTPS OR LOCALHOST.",
-                    false
-                );
-
+                showError("SECURE LOGIN REQUIRES HTTPS OR LOCALHOST.", false);
             }
         }
 
-
-        passInput.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key === "Enter"
-                ) {
-
-                    verifyCode();
-
-                }
-
-            }
-        );
-
+        passInput.addEventListener("keydown", event => {
+            if (event.key === "Enter") verifyCode();
+        });
 
         function unlockSystem() {
-
             isUnlocked = true;
-
             failedAttempts = 0;
-
             clearError();
 
-            document
-                .getElementById(
-                    "security-overlay"
-                )
-                .style.display =
-                "none";
-
-            document
-                .getElementById(
-                    "toolbar-app"
-                )
-                .style.display =
-                "flex";
-
-            document
-                .getElementById(
-                    "main-app"
-                )
-                .style.display =
-                "block";
+            document.getElementById("security-overlay").style.display = "none";
+            document.getElementById("toolbar-app").style.display = "flex";
+            document.getElementById("main-app").style.display = "block";
 
             ensureInvoiceMetaOnUnlock();
-
             initializeCurrency();
-
             resizeAllTextareas();
-
             updateTotal();
-
             saveDraft();
-
             resetInactivityTimer();
         }
 
-
-        function lockSystem(
-            reason = "manual"
-        ) {
-
+        function lockSystem(reason = "manual") {
             isUnlocked = false;
 
-            document
-                .getElementById(
-                    "security-overlay"
-                )
-                .style.display =
-                "flex";
-
-            document
-                .getElementById(
-                    "toolbar-app"
-                )
-                .style.display =
-                "none";
-
-            document
-                .getElementById(
-                    "main-app"
-                )
-                .style.display =
-                "none";
+            document.getElementById("security-overlay").style.display = "flex";
+            document.getElementById("toolbar-app").style.display = "none";
+            document.getElementById("main-app").style.display = "none";
 
             passInput.value = "";
-
             clearError();
 
-            if (
-                reason ===
-                "inactivity"
-            ) {
-
-                showError(
-                    "AUTO-LOCKED DUE TO INACTIVITY. ENTER CODE TO CONTINUE.",
-                    false
-                );
-
+            if (reason === "inactivity") {
+                showError("AUTO-LOCKED DUE TO INACTIVITY. ENTER CODE TO CONTINUE.", false);
             }
 
             clearInactivityTimer();
-
             closeNewInvoiceModal();
-
-            setTimeout(
-                () =>
-                    passInput.focus(),
-                50
-            );
+            setTimeout(() => passInput.focus(), 50);
         }
 
-
         // =====================================================
-        // AUTO-LOCK
+        // AUTO-LOCK (2 MINUTES INACTIVITY)
         // =====================================================
-
-        const INACTIVITY_MS =
-            2 * 60 * 1000;
-
+        const INACTIVITY_MS = 2 * 60 * 1000;
         let inactivityTimer = null;
 
-
         function clearInactivityTimer() {
-
-            if (inactivityTimer) {
-                clearTimeout(
-                    inactivityTimer
-                );
-            }
-
+            if (inactivityTimer) clearTimeout(inactivityTimer);
             inactivityTimer = null;
         }
 
-
         function resetInactivityTimer() {
-
-            if (!isUnlocked) {
-                return;
-            }
-
+            if (!isUnlocked) return;
             clearInactivityTimer();
-
-            inactivityTimer =
-                setTimeout(
-                    () =>
-                        lockSystem(
-                            "inactivity"
-                        ),
-                    INACTIVITY_MS
-                );
+            inactivityTimer = setTimeout(() => lockSystem("inactivity"), INACTIVITY_MS);
         }
 
-
-        [
-            "mousemove",
-            "mousedown",
-            "keydown",
-            "touchstart",
-            "touchmove",
-            "scroll",
-            "click"
-        ].forEach(
-            eventName => {
-
-                window.addEventListener(
-                    eventName,
-                    resetInactivityTimer,
-                    {
-                        passive: true
-                    }
-                );
-
-            }
-        );
-
+        ["mousemove", "mousedown", "keydown", "touchstart", "touchmove", "scroll", "click"].forEach(eventName => {
+            window.addEventListener(eventName, resetInactivityTimer, { passive: true });
+        });
 
         // =====================================================
         // CURRENCY
+        // Currency selection changes the invoice currency only.
+        // It does NOT perform foreign-exchange conversion.
         // =====================================================
-
         const CURRENCIES = {
-
-            NGN: {
-                code: "NGN",
-                symbol: "₦",
-                locale: "en-NG"
-            },
-
-            USD: {
-                code: "USD",
-                symbol: "$",
-                locale: "en-US"
-            },
-
-            GBP: {
-                code: "GBP",
-                symbol: "£",
-                locale: "en-GB"
-            },
-
-            EUR: {
-                code: "EUR",
-                symbol: "€",
-                locale: "en-IE"
-            }
-
+            NGN: { code: "NGN", symbol: "₦", locale: "en-NG" },
+            USD: { code: "USD", symbol: "$", locale: "en-US" },
+            GBP: { code: "GBP", symbol: "£", locale: "en-GB" },
+            EUR: { code: "EUR", symbol: "€", locale: "en-IE" }
         };
 
+        let currentCurrency = storageGet(CURRENCY_KEY) || "NGN";
+        if (!CURRENCIES[currentCurrency]) currentCurrency = "NGN";
 
-        let currentCurrency =
-            storageGet(
-                CURRENCY_KEY
-            ) || "NGN";
-
-
-        if (
-            !CURRENCIES[
-            currentCurrency
-            ]
-        ) {
-
-            currentCurrency =
-                "NGN";
-
+        function formatNumber(amount) {
+            return new Intl.NumberFormat(CURRENCIES[currentCurrency].locale, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(Number(amount) || 0);
         }
 
-
-        function formatNumber(
-            amount
-        ) {
-
-            return new Intl
-                .NumberFormat(
-                    CURRENCIES[
-                        currentCurrency
-                    ].locale,
-                    {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 2
-                    }
-                )
-                .format(
-                    Number(amount) || 0
-                );
-        }
-
-
-        function formatMoney(
-            amount
-        ) {
-
+        function formatMoney(amount) {
             return `${CURRENCIES[currentCurrency].symbol}${formatNumber(amount)}`;
-
         }
-
 
         function initializeCurrency() {
+            const select = document.getElementById("currencySelect");
+            const header = document.getElementById("currency-symbol-header");
 
-            const select =
-                document
-                    .getElementById(
-                        "currencySelect"
-                    );
-
-            const header =
-                document
-                    .getElementById(
-                        "currency-symbol-header"
-                    );
-
-            if (
-                !CURRENCIES[
-                currentCurrency
-                ]
-            ) {
-
-                currentCurrency =
-                    "NGN";
-
-            }
-
-            if (select) {
-
-                select.value =
-                    currentCurrency;
-
-            }
-
-            if (header) {
-
-                header.textContent =
-                    CURRENCIES[
-                        currentCurrency
-                    ].symbol;
-
-            }
+            if (!CURRENCIES[currentCurrency]) currentCurrency = "NGN";
+            if (select) select.value = currentCurrency;
+            if (header) header.textContent = CURRENCIES[currentCurrency].symbol;
 
             updateTotal();
         }
 
-
         function changeCurrency() {
-
             resetInactivityTimer();
 
-            const select =
-                document
-                    .getElementById(
-                        "currencySelect"
-                    );
+            const select = document.getElementById("currencySelect");
+            if (!select || !CURRENCIES[select.value]) return;
 
-            if (
-                !select ||
-                !CURRENCIES[
-                select.value
-                ]
-            ) {
-
-                return;
-
-            }
-
-            currentCurrency =
-                select.value;
-
-            storageSet(
-                CURRENCY_KEY,
-                currentCurrency
-            );
-
+            currentCurrency = select.value;
+            storageSet(CURRENCY_KEY, currentCurrency);
             initializeCurrency();
-
             scheduleSaveDraft();
         }
 
-
         // =====================================================
-        // DATE + INVOICE NUMBERING
+        // AUTO DATE + INVOICE NUMBER
+        // Format: YYYY/MM/NNNN
+        // Number is previewed while drafting and committed on first export.
+        // This avoids wasting numbers when a draft is cleared before issue.
         // =====================================================
-
         const MONTHS_3 = [
-            "JAN",
-            "FEB",
-            "MAR",
-            "APR",
-            "MAY",
-            "JUN",
-            "JUL",
-            "AUG",
-            "SEP",
-            "OCT",
-            "NOV",
-            "DEC"
+            "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+            "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"
         ];
 
-
-        let dateManuallyEdited =
-            false;
-
-        let invoiceNoManuallyEdited =
-            false;
-
-        let invoiceNumberCommitted =
-            false;
-
-        let draftRestored =
-            false;
-
+        let dateManuallyEdited = false;
+        let invoiceNoManuallyEdited = false;
+        let invoiceNumberCommitted = false;
+        let draftRestored = false;
 
         function pad2(n) {
-
-            return String(n)
-                .padStart(
-                    2,
-                    "0"
-                );
-
+            return String(n).padStart(2, "0");
         }
-
 
         function pad4(n) {
-
-            return String(n)
-                .padStart(
-                    4,
-                    "0"
-                );
-
+            return String(n).padStart(4, "0");
         }
-
 
         function getStrictDisplayedDate() {
+            const y = parseInt(invYearEl?.value, 10);
+            const d = parseInt(invDayEl?.value, 10);
+            const m3 = (invMonthEl?.value || "").toUpperCase().trim();
+            const mIndex = MONTHS_3.indexOf(m3);
 
-            const y =
-                parseInt(
-                    invYearEl?.value,
-                    10
-                );
+            if (!Number.isFinite(y) || !Number.isFinite(d) || mIndex < 0) return null;
 
-            const d =
-                parseInt(
-                    invDayEl?.value,
-                    10
-                );
-
-            const m3 =
-                (
-                    invMonthEl
-                        ?.value ||
-                    ""
-                )
-                    .toUpperCase()
-                    .trim();
-
-            const mIndex =
-                MONTHS_3
-                    .indexOf(m3);
-
-            if (
-                !Number.isFinite(y) ||
-                !Number.isFinite(d) ||
-                mIndex < 0
-            ) {
-
-                return null;
-
-            }
-
-            const dt =
-                new Date(
-                    y,
-                    mIndex,
-                    d
-                );
-
+            const dt = new Date(y, mIndex, d);
             const isStrictlyValid =
+                !isNaN(dt.getTime()) &&
+                dt.getFullYear() === y &&
+                dt.getMonth() === mIndex &&
+                dt.getDate() === d;
 
-                !isNaN(
-                    dt.getTime()
-                ) &&
-
-                dt.getFullYear() ===
-                y &&
-
-                dt.getMonth() ===
-                mIndex &&
-
-                dt.getDate() ===
-                d;
-
-            return isStrictlyValid
-                ? dt
-                : null;
+            return isStrictlyValid ? dt : null;
         }
-
 
         function getDisplayedDate() {
-
-            return (
-                getStrictDisplayedDate() ||
-                new Date()
-            );
-
+            return getStrictDisplayedDate() || new Date();
         }
 
+        function setDateToToday({ force = false } = {}) {
+            if (!invDayEl || !invMonthEl || !invYearEl) return;
+            if (!force && dateManuallyEdited) return;
 
-        function setDateToToday({
-            force = false
-        } = {}) {
-
-            if (
-                !invDayEl ||
-                !invMonthEl ||
-                !invYearEl
-            ) {
-
-                return;
-
-            }
-
-            if (
-                !force &&
-                dateManuallyEdited
-            ) {
-
-                return;
-
-            }
-
-            const now =
-                new Date();
-
-            invDayEl.value =
-                pad2(
-                    now.getDate()
-                );
-
-            invMonthEl.value =
-                MONTHS_3[
-                now.getMonth()
-                ];
-
-            invYearEl.value =
-                String(
-                    now.getFullYear()
-                );
+            const now = new Date();
+            invDayEl.value = pad2(now.getDate());
+            invMonthEl.value = MONTHS_3[now.getMonth()];
+            invYearEl.value = String(now.getFullYear());
         }
 
-
-        function counterKeyFor(
-            dateObj
-        ) {
-
-            const y =
-                dateObj
-                    .getFullYear();
-
-            const m =
-                pad2(
-                    dateObj
-                        .getMonth() + 1
-                );
-
+        function counterKeyFor(dateObj) {
+            const y = dateObj.getFullYear();
+            const m = pad2(dateObj.getMonth() + 1);
             return `sq_invoice_counter_${y}_${m}`;
-
         }
 
-
-        function readCounter(
-            dateObj
-        ) {
-
-            const raw =
-                storageGet(
-                    counterKeyFor(
-                        dateObj
-                    )
-                );
-
-            const num =
-                parseInt(
-                    raw,
-                    10
-                );
-
-            return (
-                Number.isFinite(num) &&
-                num >= 0
-            )
-                ? num
-                : 0;
+        function readCounter(dateObj) {
+            const raw = storageGet(counterKeyFor(dateObj));
+            const num = parseInt(raw, 10);
+            return Number.isFinite(num) && num >= 0 ? num : 0;
         }
 
-
-        function writeCounter(
-            dateObj,
-            value
-        ) {
-
-            storageSet(
-                counterKeyFor(
-                    dateObj
-                ),
-                String(value)
-            );
-
+        function writeCounter(dateObj, value) {
+            storageSet(counterKeyFor(dateObj), String(value));
         }
 
-
-        function formatInvoiceNo(
-            dateObj,
-            seqNum
-        ) {
-
-            const y =
-                dateObj
-                    .getFullYear();
-
-            const m =
-                pad2(
-                    dateObj
-                        .getMonth() + 1
-                );
-
+        function formatInvoiceNo(dateObj, seqNum) {
+            const y = dateObj.getFullYear();
+            const m = pad2(dateObj.getMonth() + 1);
             return `${y}/${m}/${pad4(seqNum)}`;
-
         }
 
+        function setInvoiceNumberPreview({ force = false } = {}) {
+            if (!invoiceNoEl) return;
+            if (!force && (invoiceNoManuallyEdited || invoiceNumberCommitted)) return;
 
-        function setInvoiceNumberPreview({
-            force = false
-        } = {}) {
-
-            if (!invoiceNoEl) {
-                return;
-            }
-
-            if (
-                !force &&
-                (
-                    invoiceNoManuallyEdited ||
-                    invoiceNumberCommitted
-                )
-            ) {
-
-                return;
-
-            }
-
-            const dt =
-                getDisplayedDate();
-
-            const next =
-                readCounter(dt) + 1;
-
-            invoiceNoEl.value =
-                formatInvoiceNo(
-                    dt,
-                    next
-                );
+            const dt = getDisplayedDate();
+            const next = readCounter(dt) + 1;
+            invoiceNoEl.value = formatInvoiceNo(dt, next);
         }
-
 
         function commitInvoiceNumberIfNeeded() {
+            if (invoiceNoManuallyEdited || invoiceNumberCommitted) return;
 
-            if (
-                invoiceNoManuallyEdited ||
-                invoiceNumberCommitted
-            ) {
-
-                return;
-
-            }
-
-            const dt =
-                getDisplayedDate();
-
-            const next =
-                readCounter(dt) + 1;
-
-            invoiceNoEl.value =
-                formatInvoiceNo(
-                    dt,
-                    next
-                );
-
-            writeCounter(
-                dt,
-                next
-            );
-
-            invoiceNumberCommitted =
-                true;
-
+            const dt = getDisplayedDate();
+            const next = readCounter(dt) + 1;
+            invoiceNoEl.value = formatInvoiceNo(dt, next);
+            writeCounter(dt, next);
+            invoiceNumberCommitted = true;
             saveDraft();
         }
 
-
         function ensureInvoiceMetaOnUnlock() {
-
-            if (
-                !draftRestored
-            ) {
-
-                setDateToToday({
-                    force: false
-                });
-
+            if (!draftRestored) {
+                setDateToToday({ force: false });
             }
 
-            if (
-                !(
-                    invoiceNoEl
-                        .value ||
-                    ""
-                ).trim()
-            ) {
-
-                setInvoiceNumberPreview({
-                    force: true
-                });
-
+            if (!(invoiceNoEl.value || "").trim()) {
+                setInvoiceNumberPreview({ force: true });
             }
         }
 
+        [invDayEl, invMonthEl, invYearEl].forEach(element => {
+            if (!element) return;
 
-        [
-            invDayEl,
-            invMonthEl,
-            invYearEl
-        ].forEach(
-            element => {
+            element.addEventListener("input", () => {
+                dateManuallyEdited = true;
+                scheduleSaveDraft();
+            });
 
-                if (!element) {
-                    return;
+            element.addEventListener("change", () => {
+                if (!invoiceNoManuallyEdited && !invoiceNumberCommitted) {
+                    setInvoiceNumberPreview({ force: true });
                 }
-
-                element
-                    .addEventListener(
-                        "input",
-                        () => {
-
-                            dateManuallyEdited =
-                                true;
-
-                            scheduleSaveDraft();
-
-                        }
-                    );
-
-                element
-                    .addEventListener(
-                        "change",
-                        () => {
-
-                            if (
-                                !invoiceNoManuallyEdited &&
-                                !invoiceNumberCommitted
-                            ) {
-
-                                setInvoiceNumberPreview({
-                                    force: true
-                                });
-
-                            }
-
-                            scheduleSaveDraft();
-
-                        }
-                    );
-
-            }
-        );
-
+                scheduleSaveDraft();
+            });
+        });
 
         if (invoiceNoEl) {
-
-            invoiceNoEl
-                .addEventListener(
-                    "input",
-                    () => {
-
-                        invoiceNoManuallyEdited =
-                            true;
-
-                        invoiceNumberCommitted =
-                            true;
-
-                        scheduleSaveDraft();
-
-                    }
-                );
-
+            invoiceNoEl.addEventListener("input", () => {
+                invoiceNoManuallyEdited = true;
+                invoiceNumberCommitted = true;
+                scheduleSaveDraft();
+            });
         }
 
-
         // =====================================================
-        // INVOICE ROWS
+        // INVOICE ROWS + CALCULATIONS
         // =====================================================
-
-        function createInvoiceRow(
-            rowNumber,
-            data = {}
-        ) {
-
-            const tr =
-                document
-                    .createElement(
-                        "tr"
-                    );
-
-            tr.className =
-                `border-t-2 border-black ${rowNumber % 2 === 0
-                    ? "row-tint"
-                    : ""
-                }`;
+        function createInvoiceRow(rowNumber, data = {}) {
+            const tr = document.createElement("tr");
+            tr.className = `border-t-2 border-black ${rowNumber % 2 === 0 ? "row-tint" : ""}`;
 
             tr.innerHTML = `
                 <td class="serial-cell border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">${rowNumber}</td>
-
                 <td class="border-r-2 border-black p-3">
                     <textarea class="service-name font-serif text-lg leading-snug" rows="2" placeholder="Service Name"></textarea>
                 </td>
-
                 <td class="border-r-2 border-black p-3">
                     <textarea class="service-description font-serif text-sm italic" rows="2" placeholder="Short description"></textarea>
                 </td>
-
                 <td class="p-3 align-top">
                     <input value="0" inputmode="decimal" class="text-right text-2xl font-black item-total">
                 </td>
             `;
 
-            tr
-                .querySelector(
-                    ".service-name"
-                )
-                .value =
-                data.serviceName ||
-                "";
-
-            tr
-                .querySelector(
-                    ".service-description"
-                )
-                .value =
-                data.description ||
-                "";
-
-            tr
-                .querySelector(
-                    ".item-total"
-                )
-                .value =
-                data.total ??
-                "0";
+            tr.querySelector(".service-name").value = data.serviceName || "";
+            tr.querySelector(".service-description").value = data.description || "";
+            tr.querySelector(".item-total").value = data.total ?? "0";
 
             return tr;
         }
 
-
         function renumberRows() {
+            const rows = document.querySelectorAll("#invoice-rows tr");
 
-            const rows =
-                document
-                    .querySelectorAll(
-                        "#invoice-rows tr"
-                    );
+            rows.forEach((row, index) => {
+                const number = index + 1;
+                const serial = row.querySelector(".serial-cell");
+                if (serial) serial.textContent = number;
 
-            rows.forEach(
-                (
-                    row,
-                    index
-                ) => {
-
-                    const number =
-                        index + 1;
-
-                    const serial =
-                        row
-                            .querySelector(
-                                ".serial-cell"
-                            );
-
-                    if (serial) {
-
-                        serial.textContent =
-                            number;
-
-                    }
-
-                    row.classList
-                        .toggle(
-                            "row-tint",
-                            number % 2 === 0
-                        );
-
-                }
-            );
+                row.classList.toggle("row-tint", number % 2 === 0);
+            });
         }
 
-
         function addRow() {
-
             resetInactivityTimer();
 
-            const tbody =
-                document
-                    .getElementById(
-                        "invoice-rows"
-                    );
-
-            const rowNumber =
-                tbody.children.length +
-                1;
-
-            const tr =
-                createInvoiceRow(
-                    rowNumber
-                );
+            const tbody = document.getElementById("invoice-rows");
+            const rowNumber = tbody.children.length + 1;
+            const tr = createInvoiceRow(rowNumber);
 
             tbody.appendChild(tr);
-
             resizeAllTextareas();
-
             scheduleSaveDraft();
         }
 
-
         function removeRow() {
-
             resetInactivityTimer();
 
-            const tbody =
-                document
-                    .getElementById(
-                        "invoice-rows"
-                    );
-
-            if (
-                tbody.children.length >
-                1
-            ) {
-
-                tbody.removeChild(
-                    tbody
-                        .lastElementChild
-                );
-
+            const tbody = document.getElementById("invoice-rows");
+            if (tbody.children.length > 1) {
+                tbody.removeChild(tbody.lastElementChild);
                 renumberRows();
-
                 updateTotal();
-
                 scheduleSaveDraft();
             }
         }
 
+        function parseMoneyInput(value) {
+            const cleaned = String(value ?? "")
+                .replace(/,/g, "")
+                .replace(/[^\d.]/g, "");
 
-        // =====================================================
-        // MONEY + TOTALS
-        // =====================================================
+            if (!cleaned) return 0;
 
-        function parseMoneyInput(
-            value
-        ) {
+            const firstDot = cleaned.indexOf(".");
+            const normalized = firstDot === -1
+                ? cleaned
+                : cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, "");
 
-            const cleaned =
-                String(
-                    value ?? ""
-                )
-                    .replace(
-                        /,/g,
-                        ""
-                    )
-                    .replace(
-                        /[^\d.]/g,
-                        ""
-                    );
-
-            if (!cleaned) {
-                return 0;
-            }
-
-            const firstDot =
-                cleaned
-                    .indexOf(".");
-
-            const normalized =
-                firstDot === -1
-                    ? cleaned
-                    :
-                    cleaned.slice(
-                        0,
-                        firstDot + 1
-                    ) +
-                    cleaned
-                        .slice(
-                            firstDot + 1
-                        )
-                        .replace(
-                            /\./g,
-                            ""
-                        );
-
-            return (
-                parseFloat(
-                    normalized
-                ) || 0
-            );
+            return parseFloat(normalized) || 0;
         }
 
-
-        function formatAmountInput(
-            input
-        ) {
-
-            const value =
-                parseMoneyInput(
-                    input.value
-                );
-
-            input.value =
-                formatNumber(
-                    value
-                );
+        function formatAmountInput(input) {
+            const value = parseMoneyInput(input.value);
+            input.value = formatNumber(value);
         }
 
-
-        function clampPercent(
-            value
-        ) {
-
-            const numeric =
-                parseFloat(
-                    value
-                ) || 0;
-
-            return Math.min(
-                Math.max(
-                    numeric,
-                    0
-                ),
-                100
-            );
+        function clampPercent(value) {
+            const numeric = parseFloat(value) || 0;
+            return Math.min(Math.max(numeric, 0), 100);
         }
 
-
-        function normalizePercentInput(
-            input
-        ) {
-
-            input.value =
-                String(
-                    clampPercent(
-                        input.value
-                    )
-                );
+        function normalizePercentInput(input) {
+            input.value = String(clampPercent(input.value));
         }
-
 
         function updateTotal() {
-
             let subtotal = 0;
 
-            document
-                .querySelectorAll(
-                    ".item-total"
-                )
-                .forEach(
-                    input => {
+            document.querySelectorAll(".item-total").forEach(input => {
+                subtotal += parseMoneyInput(input.value);
+            });
 
-                        subtotal +=
-                            parseMoneyInput(
-                                input.value
-                            );
+            const discountPerc = clampPercent(discountEl?.value);
+            const taxPerc = clampPercent(taxEl?.value);
 
-                    }
-                );
+            const discountAmount = subtotal * (discountPerc / 100);
+            const subAfterDiscount = subtotal - discountAmount;
+            const taxAmount = subAfterDiscount * (taxPerc / 100);
+            const total = subAfterDiscount + taxAmount;
 
-            const discountPerc =
-                clampPercent(
-                    discountEl
-                        ?.value
-                );
-
-            const taxPerc =
-                clampPercent(
-                    taxEl
-                        ?.value
-                );
-
-            const discountAmount =
-                subtotal *
-                (
-                    discountPerc /
-                    100
-                );
-
-            const subAfterDiscount =
-                subtotal -
-                discountAmount;
-
-            const taxAmount =
-                subAfterDiscount *
-                (
-                    taxPerc /
-                    100
-                );
-
-            const total =
-                subAfterDiscount +
-                taxAmount;
-
-            document
-                .getElementById(
-                    "sub-total"
-                )
-                .innerText =
-                formatMoney(
-                    subtotal
-                );
-
-            document
-                .getElementById(
-                    "grand-total"
-                )
-                .innerText =
-                formatMoney(
-                    total
-                );
+            document.getElementById("sub-total").innerText = formatMoney(subtotal);
+            document.getElementById("grand-total").innerText = formatMoney(total);
         }
-
 
         // =====================================================
         // AUTO-GROW TEXTAREAS
         // =====================================================
-
-        function autoResizeTextarea(
-            textarea
-        ) {
-
-            if (!textarea) {
-                return;
-            }
-
-            textarea.style.height =
-                "auto";
-
-            textarea.style.height =
-                `${textarea.scrollHeight}px`;
-
+        function autoResizeTextarea(textarea) {
+            if (!textarea) return;
+            textarea.style.height = "auto";
+            textarea.style.height = `${textarea.scrollHeight}px`;
         }
-
 
         function resizeAllTextareas() {
-
-            document
-                .querySelectorAll(
-                    "#invoice-wrapper textarea"
-                )
-                .forEach(
-                    autoResizeTextarea
-                );
-
+            document.querySelectorAll("#invoice-wrapper textarea").forEach(autoResizeTextarea);
         }
 
+        document.addEventListener("input", event => {
+            const target = event.target;
 
-        document.addEventListener(
-            "input",
-            event => {
-
-                const target =
-                    event.target;
-
-                if (
-                    target.matches(
-                        "#invoice-wrapper textarea"
-                    )
-                ) {
-
-                    autoResizeTextarea(
-                        target
-                    );
-
-                }
-
-                if (
-                    target.matches(
-                        ".item-total, .percent-input"
-                    )
-                ) {
-
-                    updateTotal();
-
-                }
-
-                if (
-                    target.closest(
-                        "#invoice-wrapper"
-                    )
-                ) {
-
-                    scheduleSaveDraft();
-
-                }
-
+            if (target.matches("#invoice-wrapper textarea")) {
+                autoResizeTextarea(target);
             }
-        );
 
-
-        document.addEventListener(
-            "focusout",
-            event => {
-
-                const target =
-                    event.target;
-
-                if (
-                    target.matches(
-                        ".item-total"
-                    )
-                ) {
-
-                    formatAmountInput(
-                        target
-                    );
-
-                    updateTotal();
-
-                    scheduleSaveDraft();
-
-                }
-
-                if (
-                    target.matches(
-                        ".percent-input"
-                    )
-                ) {
-
-                    normalizePercentInput(
-                        target
-                    );
-
-                    updateTotal();
-
-                    scheduleSaveDraft();
-
-                }
-
+            if (target.matches(".item-total, .percent-input")) {
+                updateTotal();
             }
-        );
 
+            if (target.closest("#invoice-wrapper")) {
+                scheduleSaveDraft();
+            }
+        });
+
+        document.addEventListener("focusout", event => {
+            const target = event.target;
+
+            if (target.matches(".item-total")) {
+                formatAmountInput(target);
+                updateTotal();
+                scheduleSaveDraft();
+            }
+
+            if (target.matches(".percent-input")) {
+                normalizePercentInput(target);
+                updateTotal();
+                scheduleSaveDraft();
+            }
+        });
 
         // =====================================================
-        // PAYMENT SETTINGS
+        // BUSINESS PAYMENT SETTINGS (PERSIST ACROSS NEW INVOICES)
         // =====================================================
-
-        const bankNameEl =
-            document
-                .getElementById(
-                    "bankName"
-                );
-
-        const accountNameEl =
-            document
-                .getElementById(
-                    "accountName"
-                );
-
-        const accountNumberEl =
-            document
-                .getElementById(
-                    "accountNumber"
-                );
-
+        const bankNameEl = document.getElementById("bankName");
+        const accountNameEl = document.getElementById("accountName");
+        const accountNumberEl = document.getElementById("accountNumber");
 
         function saveBusinessSettings() {
-
             const settings = {
-
-                bankName:
-                    bankNameEl
-                        ?.value ||
-                    "",
-
-                accountName:
-                    accountNameEl
-                        ?.value ||
-                    "",
-
-                accountNumber:
-                    accountNumberEl
-                        ?.value ||
-                    ""
-
+                bankName: bankNameEl?.value || "",
+                accountName: accountNameEl?.value || "",
+                accountNumber: accountNumberEl?.value || ""
             };
 
-            storageSet(
-                BUSINESS_SETTINGS_KEY,
-                JSON.stringify(
-                    settings
-                )
-            );
+            storageSet(BUSINESS_SETTINGS_KEY, JSON.stringify(settings));
         }
 
-
         function loadBusinessSettings() {
-
-            const raw =
-                storageGet(
-                    BUSINESS_SETTINGS_KEY
-                );
-
-            if (!raw) {
-                return;
-            }
+            const raw = storageGet(BUSINESS_SETTINGS_KEY);
+            if (!raw) return;
 
             try {
-
-                const settings =
-                    JSON.parse(raw);
-
-                if (bankNameEl) {
-
-                    bankNameEl.value =
-                        settings.bankName ||
-                        "";
-
-                }
-
-                if (accountNameEl) {
-
-                    accountNameEl.value =
-                        settings.accountName ||
-                        "";
-
-                }
-
-                if (accountNumberEl) {
-
-                    accountNumberEl.value =
-                        settings.accountNumber ||
-                        "";
-
-                }
-
+                const settings = JSON.parse(raw);
+                if (bankNameEl) bankNameEl.value = settings.bankName || "";
+                if (accountNameEl) accountNameEl.value = settings.accountName || "";
+                if (accountNumberEl) accountNumberEl.value = settings.accountNumber || "";
             } catch (_) { }
         }
 
-
-        [
-            bankNameEl,
-            accountNameEl,
-            accountNumberEl
-        ].forEach(
-            element => {
-
-                if (!element) {
-                    return;
-                }
-
-                element
-                    .addEventListener(
-                        "input",
-                        saveBusinessSettings
-                    );
-
-            }
-        );
-
+        [bankNameEl, accountNameEl, accountNumberEl].forEach(element => {
+            if (!element) return;
+            element.addEventListener("input", saveBusinessSettings);
+        });
 
         // =====================================================
         // EXTRA DETAILS VISIBILITY
         // =====================================================
+        let extraDetailsVisible = false;
 
-        let extraDetailsVisible =
-            false;
+        function setExtraDetailsVisible(visible, { save = true } = {}) {
+            extraDetailsVisible = Boolean(visible);
 
-
-        function setExtraDetailsVisible(
-            visible,
-            {
-                save = true
-            } = {}
-        ) {
-
-            extraDetailsVisible =
-                Boolean(visible);
-
-            const section =
-                document
-                    .getElementById(
-                        "extra-details-section"
-                    );
-
-            const button =
-                document
-                    .getElementById(
-                        "extraDetailsBtn"
-                    );
+            const section = document.getElementById("extra-details-section");
+            const button = document.getElementById("extraDetailsBtn");
 
             if (section) {
-
-                section.classList
-                    .toggle(
-                        "hidden",
-                        !extraDetailsVisible
-                    );
-
+                section.classList.toggle("hidden", !extraDetailsVisible);
             }
 
             if (button) {
-
-                button.classList
-                    .toggle(
-                        "brand-blue",
-                        extraDetailsVisible
-                    );
-
-                button.classList
-                    .toggle(
-                        "text-white",
-                        extraDetailsVisible
-                    );
-
-                button.classList
-                    .toggle(
-                        "bg-gray-50",
-                        !extraDetailsVisible
-                    );
-
-                button.classList
-                    .toggle(
-                        "text-gray-800",
-                        !extraDetailsVisible
-                    );
-
+                button.classList.toggle("brand-blue", extraDetailsVisible);
+                button.classList.toggle("text-white", extraDetailsVisible);
+                button.classList.toggle("bg-gray-50", !extraDetailsVisible);
+                button.classList.toggle("text-gray-800", !extraDetailsVisible);
             }
 
-            if (
-                extraDetailsVisible
-            ) {
-
-                setTimeout(
-                    resizeAllTextareas,
-                    0
-                );
-
+            if (extraDetailsVisible) {
+                setTimeout(resizeAllTextareas, 0);
             }
 
-            if (save) {
-
-                scheduleSaveDraft();
-
-            }
+            if (save) scheduleSaveDraft();
         }
-
 
         function toggleExtraDetails() {
-
             resetInactivityTimer();
-
-            setExtraDetailsVisible(
-                !extraDetailsVisible
-            );
+            setExtraDetailsVisible(!extraDetailsVisible);
         }
 
-
         // =====================================================
-        // AUTO-SAVE / RESTORE DRAFT
+        // AUTO-SAVE / RESTORE CURRENT DRAFT
         // =====================================================
-
         let saveDraftTimer = null;
-
-        let isRestoringDraft =
-            false;
-
+        let isRestoringDraft = false;
 
         function collectRows() {
-
-            return Array
-                .from(
-                    document
-                        .querySelectorAll(
-                            "#invoice-rows tr"
-                        )
-                )
-                .map(
-                    row => ({
-
-                        serviceName:
-                            row
-                                .querySelector(
-                                    ".service-name"
-                                )
-                                ?.value ||
-                            "",
-
-                        description:
-                            row
-                                .querySelector(
-                                    ".service-description"
-                                )
-                                ?.value ||
-                            "",
-
-                        total:
-                            row
-                                .querySelector(
-                                    ".item-total"
-                                )
-                                ?.value ||
-                            "0"
-
-                    })
-                );
+            return Array.from(document.querySelectorAll("#invoice-rows tr")).map(row => ({
+                serviceName: row.querySelector(".service-name")?.value || "",
+                description: row.querySelector(".service-description")?.value || "",
+                total: row.querySelector(".item-total")?.value || "0"
+            }));
         }
-
 
         function saveDraft() {
-
-            if (
-                isRestoringDraft
-            ) {
-
-                return;
-
-            }
+            if (isRestoringDraft) return;
 
             const draft = {
-
                 version: 2,
-
-                clientName:
-                    clientNameEl
-                        ?.value ||
-                    "",
-
-                clientPhone:
-                    clientPhoneEl
-                        ?.value ||
-                    "",
-
-                clientAddress:
-                    clientAddressEl
-                        ?.value ||
-                    "",
-
-                invoiceNo:
-                    invoiceNoEl
-                        ?.value ||
-                    "",
-
-                day:
-                    invDayEl
-                        ?.value ||
-                    "",
-
-                month:
-                    invMonthEl
-                        ?.value ||
-                    "",
-
-                year:
-                    invYearEl
-                        ?.value ||
-                    "",
-
-                rows:
-                    collectRows(),
-
-                discount:
-                    discountEl
-                        ?.value ||
-                    "0",
-
-                tax:
-                    taxEl
-                        ?.value ||
-                    "0",
-
-                currency:
-                    currentCurrency,
-
-                notes:
-                    notesEl
-                        ?.value ||
-                    "",
-
+                clientName: clientNameEl?.value || "",
+                clientPhone: clientPhoneEl?.value || "",
+                clientAddress: clientAddressEl?.value || "",
+                invoiceNo: invoiceNoEl?.value || "",
+                day: invDayEl?.value || "",
+                month: invMonthEl?.value || "",
+                year: invYearEl?.value || "",
+                rows: collectRows(),
+                discount: discountEl?.value || "0",
+                tax: taxEl?.value || "0",
+                currency: currentCurrency,
+                notes: notesEl?.value || "",
                 extraDetailsVisible,
-
                 dateManuallyEdited,
-
                 invoiceNoManuallyEdited,
-
                 invoiceNumberCommitted
-
             };
 
-            storageSet(
-                DRAFT_KEY,
-                JSON.stringify(
-                    draft
-                )
-            );
+            storageSet(DRAFT_KEY, JSON.stringify(draft));
         }
-
 
         function scheduleSaveDraft() {
+            if (isRestoringDraft) return;
 
-            if (
-                isRestoringDraft
-            ) {
-
-                return;
-
-            }
-
-            clearTimeout(
-                saveDraftTimer
-            );
-
-            saveDraftTimer =
-                setTimeout(
-                    saveDraft,
-                    250
-                );
+            clearTimeout(saveDraftTimer);
+            saveDraftTimer = setTimeout(saveDraft, 250);
         }
-
 
         function restoreDraft() {
-
-            const raw =
-                storageGet(
-                    DRAFT_KEY
-                );
-
-            if (!raw) {
-                return false;
-            }
+            const raw = storageGet(DRAFT_KEY);
+            if (!raw) return false;
 
             try {
+                const draft = JSON.parse(raw);
+                if (!draft || typeof draft !== "object") return false;
 
-                const draft =
-                    JSON.parse(raw);
+                isRestoringDraft = true;
 
-                if (
-                    !draft ||
-                    typeof draft !==
-                    "object"
-                ) {
+                if (clientNameEl) clientNameEl.value = draft.clientName || "";
+                if (clientPhoneEl) clientPhoneEl.value = draft.clientPhone || "";
+                if (clientAddressEl) clientAddressEl.value = draft.clientAddress || "";
+                if (invoiceNoEl) invoiceNoEl.value = draft.invoiceNo || "";
+                if (invDayEl) invDayEl.value = draft.day || "";
+                if (invMonthEl) invMonthEl.value = (draft.month || "").toUpperCase();
+                if (invYearEl) invYearEl.value = draft.year || "";
+                if (discountEl) discountEl.value = draft.discount ?? "0";
+                if (taxEl) taxEl.value = draft.tax ?? "0";
+                if (notesEl) notesEl.value = draft.notes || "";
 
-                    return false;
-
+                if (CURRENCIES[draft.currency]) {
+                    currentCurrency = draft.currency;
+                    storageSet(CURRENCY_KEY, currentCurrency);
                 }
 
-                isRestoringDraft =
-                    true;
+                dateManuallyEdited = Boolean(draft.dateManuallyEdited);
+                invoiceNoManuallyEdited = Boolean(draft.invoiceNoManuallyEdited);
+                invoiceNumberCommitted = Boolean(draft.invoiceNumberCommitted);
 
-                if (clientNameEl) {
+                const tbody = document.getElementById("invoice-rows");
+                tbody.innerHTML = "";
 
-                    clientNameEl.value =
-                        draft.clientName ||
-                        "";
+                const rows = Array.isArray(draft.rows) && draft.rows.length > 0
+                    ? draft.rows
+                    : [{}];
 
-                }
+                rows.forEach((row, index) => {
+                    tbody.appendChild(createInvoiceRow(index + 1, row));
+                });
 
-                if (clientPhoneEl) {
-
-                    clientPhoneEl.value =
-                        draft.clientPhone ||
-                        "";
-
-                }
-
-                if (clientAddressEl) {
-
-                    clientAddressEl.value =
-                        draft.clientAddress ||
-                        "";
-
-                }
-
-                if (invoiceNoEl) {
-
-                    invoiceNoEl.value =
-                        draft.invoiceNo ||
-                        "";
-
-                }
-
-                if (invDayEl) {
-
-                    invDayEl.value =
-                        draft.day ||
-                        "";
-
-                }
-
-                if (invMonthEl) {
-
-                    invMonthEl.value =
-                        (
-                            draft.month ||
-                            ""
-                        )
-                            .toUpperCase();
-
-                }
-
-                if (invYearEl) {
-
-                    invYearEl.value =
-                        draft.year ||
-                        "";
-
-                }
-
-                if (discountEl) {
-
-                    discountEl.value =
-                        draft.discount ??
-                        "0";
-
-                }
-
-                if (taxEl) {
-
-                    taxEl.value =
-                        draft.tax ??
-                        "0";
-
-                }
-
-                if (notesEl) {
-
-                    notesEl.value =
-                        draft.notes ||
-                        "";
-
-                }
-
-                if (
-                    CURRENCIES[
-                    draft.currency
-                    ]
-                ) {
-
-                    currentCurrency =
-                        draft.currency;
-
-                    storageSet(
-                        CURRENCY_KEY,
-                        currentCurrency
-                    );
-
-                }
-
-                dateManuallyEdited =
-                    Boolean(
-                        draft.dateManuallyEdited
-                    );
-
-                invoiceNoManuallyEdited =
-                    Boolean(
-                        draft.invoiceNoManuallyEdited
-                    );
-
-                invoiceNumberCommitted =
-                    Boolean(
-                        draft.invoiceNumberCommitted
-                    );
-
-                const tbody =
-                    document
-                        .getElementById(
-                            "invoice-rows"
-                        );
-
-                tbody.innerHTML =
-                    "";
-
-                const rows =
-
-                    Array.isArray(
-                        draft.rows
-                    ) &&
-
-                        draft.rows.length >
-                        0
-
-                        ? draft.rows
-                        : [{}];
-
-                rows.forEach(
-                    (
-                        row,
-                        index
-                    ) => {
-
-                        tbody.appendChild(
-                            createInvoiceRow(
-                                index + 1,
-                                row
-                            )
-                        );
-
-                    }
-                );
-
-                setExtraDetailsVisible(
-                    Boolean(
-                        draft.extraDetailsVisible
-                    ),
-                    {
-                        save: false
-                    }
-                );
-
-                draftRestored =
-                    true;
-
+                setExtraDetailsVisible(Boolean(draft.extraDetailsVisible), { save: false });
+                draftRestored = true;
                 return true;
-
             } catch (_) {
-
-                storageRemove(
-                    DRAFT_KEY
-                );
-
+                storageRemove(DRAFT_KEY);
                 return false;
-
             } finally {
-
-                isRestoringDraft =
-                    false;
-
+                isRestoringDraft = false;
             }
         }
 
-
         // =====================================================
-        // NEW INVOICE
+        // NEW INVOICE MODAL + RESET
         // =====================================================
-
         function openNewInvoiceModal() {
-
             resetInactivityTimer();
-
-            const modal =
-                document
-                    .getElementById(
-                        "new-invoice-modal"
-                    );
-
-            modal.classList
-                .remove(
-                    "hidden"
-                );
-
-            modal.classList
-                .add(
-                    "flex"
-                );
+            const modal = document.getElementById("new-invoice-modal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
         }
-
 
         function closeNewInvoiceModal() {
-
-            const modal =
-                document
-                    .getElementById(
-                        "new-invoice-modal"
-                    );
-
-            modal.classList
-                .add(
-                    "hidden"
-                );
-
-            modal.classList
-                .remove(
-                    "flex"
-                );
+            const modal = document.getElementById("new-invoice-modal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
         }
-
 
         function startNewInvoice() {
-
             resetInactivityTimer();
-
             closeNewInvoiceModal();
 
-            if (clientNameEl) {
+            if (clientNameEl) clientNameEl.value = "";
+            if (clientPhoneEl) clientPhoneEl.value = "";
+            if (clientAddressEl) clientAddressEl.value = "";
+            if (discountEl) discountEl.value = "0";
+            if (taxEl) taxEl.value = "0";
+            if (notesEl) notesEl.value = "";
 
-                clientNameEl.value =
-                    "";
+            const tbody = document.getElementById("invoice-rows");
+            tbody.innerHTML = "";
+            tbody.appendChild(createInvoiceRow(1));
 
-            }
+            dateManuallyEdited = false;
+            invoiceNoManuallyEdited = false;
+            invoiceNumberCommitted = false;
+            draftRestored = false;
 
-            if (clientPhoneEl) {
-
-                clientPhoneEl.value =
-                    "";
-
-            }
-
-            if (clientAddressEl) {
-
-                clientAddressEl.value =
-                    "";
-
-            }
-
-            if (discountEl) {
-
-                discountEl.value =
-                    "0";
-
-            }
-
-            if (taxEl) {
-
-                taxEl.value =
-                    "0";
-
-            }
-
-            if (notesEl) {
-
-                notesEl.value =
-                    "";
-
-            }
-
-            const tbody =
-                document
-                    .getElementById(
-                        "invoice-rows"
-                    );
-
-            tbody.innerHTML =
-                "";
-
-            tbody.appendChild(
-                createInvoiceRow(1)
-            );
-
-            dateManuallyEdited =
-                false;
-
-            invoiceNoManuallyEdited =
-                false;
-
-            invoiceNumberCommitted =
-                false;
-
-            draftRestored =
-                false;
-
-            setDateToToday({
-                force: true
-            });
-
-            setInvoiceNumberPreview({
-                force: true
-            });
+            setDateToToday({ force: true });
+            setInvoiceNumberPreview({ force: true });
 
             resizeAllTextareas();
-
             updateTotal();
-
             saveDraft();
-
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-
-        document.addEventListener(
-            "keydown",
-            event => {
-
-                if (
-                    event.key ===
-                    "Escape"
-                ) {
-
-                    closeNewInvoiceModal();
-
-                }
-
+        document.addEventListener("keydown", event => {
+            if (event.key === "Escape") {
+                closeNewInvoiceModal();
             }
-        );
-
+        });
 
         // =====================================================
         // EXPORT HELPERS
         // =====================================================
+        async function waitForImages(rootEl) {
+            const imgs = Array.from(rootEl.querySelectorAll("img"));
 
-        async function waitForImages(
-            rootEl
-        ) {
+            await Promise.all(imgs.map(img => {
+                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
 
-            const imgs =
-                Array.from(
-                    rootEl
-                        .querySelectorAll(
-                            "img"
-                        )
-                );
-
-            await Promise.all(
-                imgs.map(
-                    img => {
-
-                        if (
-                            img.complete &&
-                            img.naturalWidth >
-                            0
-                        ) {
-
-                            return Promise.resolve();
-
-                        }
-
-                        return new Promise(
-                            resolve => {
-
-                                const done =
-                                    () =>
-                                        resolve();
-
-                                img.addEventListener(
-                                    "load",
-                                    done,
-                                    {
-                                        once: true
-                                    }
-                                );
-
-                                img.addEventListener(
-                                    "error",
-                                    done,
-                                    {
-                                        once: true
-                                    }
-                                );
-
-                            }
-                        );
-
-                    }
-                )
-            );
+                return new Promise(resolve => {
+                    const done = () => resolve();
+                    img.addEventListener("load", done, { once: true });
+                    img.addEventListener("error", done, { once: true });
+                });
+            }));
         }
 
-
-        function safeFilenamePart(
-            value
-        ) {
-
-            return String(
-                value || ""
-            )
+        function safeFilenamePart(value) {
+            return String(value || "")
                 .trim()
-                .replace(
-                    /[\\/:*?"<>|]/g,
-                    "-"
-                )
-                .replace(
-                    /\s+/g,
-                    "_"
-                )
-                .replace(
-                    /_+/g,
-                    "_"
-                )
-                .replace(
-                    /^[-_.]+|[-_.]+$/g,
-                    ""
-                );
+                .replace(/[\\/:*?"<>|]/g, "-")
+                .replace(/\s+/g, "_")
+                .replace(/_+/g, "_")
+                .replace(/^[-_.]+|[-_.]+$/g, "");
         }
-
 
         function buildExportBaseName() {
-
-            const invoicePart =
-                safeFilenamePart(
-                    invoiceNoEl
-                        ?.value
-                );
-
-            const clientPart =
-                safeFilenamePart(
-                    clientNameEl
-                        ?.value
-                );
+            const invoicePart = safeFilenamePart(invoiceNoEl?.value);
+            const clientPart = safeFilenamePart(clientNameEl?.value);
 
             return [
                 "Sapphire_Quest_Invoice",
                 invoicePart,
                 clientPart,
                 currentCurrency
-            ]
-                .filter(Boolean)
-                .join("_");
+            ].filter(Boolean).join("_");
         }
 
+        function setExportBusy(isBusy, format = "pdf") {
+            const pdfBtn = document.getElementById("pdfBtn");
+            const pngBtn = document.getElementById("pngBtn");
+            const status = document.getElementById("export-status");
+            const statusTitle = document.getElementById("export-status-title");
 
-        function setExportBusy(
-            isBusy,
-            format = "pdf"
-        ) {
-
-            const pdfBtn =
-                document
-                    .getElementById(
-                        "pdfBtn"
-                    );
-
-            const pngBtn =
-                document
-                    .getElementById(
-                        "pngBtn"
-                    );
-
-            const status =
-                document
-                    .getElementById(
-                        "export-status"
-                    );
-
-            const statusTitle =
-                document
-                    .getElementById(
-                        "export-status-title"
-                    );
-
-            [
-                pdfBtn,
-                pngBtn
-            ].forEach(
-                button => {
-
-                    if (!button) {
-                        return;
-                    }
-
-                    button.disabled =
-                        isBusy;
-
-                    button.classList
-                        .toggle(
-                            "opacity-60",
-                            isBusy
-                        );
-
-                    button.classList
-                        .toggle(
-                            "cursor-not-allowed",
-                            isBusy
-                        );
-
-                }
-            );
+            [pdfBtn, pngBtn].forEach(button => {
+                if (!button) return;
+                button.disabled = isBusy;
+                button.classList.toggle("opacity-60", isBusy);
+                button.classList.toggle("cursor-not-allowed", isBusy);
+            });
 
             if (statusTitle) {
-
-                statusTitle
-                    .textContent =
-
-                    format === "pdf"
-
-                        ? "Generating PDF..."
-
-                        : "Generating PNG...";
-
+                statusTitle.textContent = format === "pdf"
+                    ? "Generating PDF..."
+                    : "Generating PNG...";
             }
 
             if (status) {
-
-                status.classList
-                    .toggle(
-                        "hidden",
-                        !isBusy
-                    );
-
-                status.classList
-                    .toggle(
-                        "flex",
-                        isBusy
-                    );
-
+                status.classList.toggle("hidden", !isBusy);
+                status.classList.toggle("flex", isBusy);
             }
         }
 
+        function replaceFieldsForExport(element) {
+            const controls = element.querySelectorAll("input, textarea");
+            const replacements = [];
 
-        function replaceFieldsForExport(
-            element
-        ) {
+            controls.forEach(control => {
+                const span = document.createElement("span");
+                let displayValue = control.value || "";
 
-            const controls =
-                element
-                    .querySelectorAll(
-                        "input, textarea"
-                    );
-
-            const replacements =
-                [];
-
-            controls.forEach(
-                control => {
-
-                    const span =
-                        document
-                            .createElement(
-                                "span"
-                            );
-
-                    let displayValue =
-                        control.value ||
-                        "";
-
-                    if (
-                        control.classList
-                            .contains(
-                                "percent-input"
-                            )
-                    ) {
-
-                        displayValue =
-                            `${clampPercent(displayValue)}%`;
-
-                    } else if (
-                        control.classList
-                            .contains(
-                                "item-total"
-                            )
-                    ) {
-
-                        displayValue =
-                            formatNumber(
-                                parseMoneyInput(
-                                    displayValue
-                                )
-                            );
-
-                    }
-
-                    span.innerText =
-                        displayValue;
-
-                    span.className =
-                        `${control.className} export-value block`;
-
-                    span.style.minHeight =
-                        "1.2em";
-
-                    replacements.push({
-
-                        control,
-
-                        span,
-
-                        originalDisplay:
-                            control
-                                .style
-                                .display
-
-                    });
-
-                    control.style.display =
-                        "none";
-
-                    control.parentNode
-                        .insertBefore(
-                            span,
-                            control
-                        );
-
+                if (control.classList.contains("percent-input")) {
+                    displayValue = `${clampPercent(displayValue)}%`;
+                } else if (control.classList.contains("item-total")) {
+                    displayValue = formatNumber(parseMoneyInput(displayValue));
                 }
-            );
+
+                span.innerText = displayValue;
+                span.className = `${control.className} export-value block`;
+                span.style.minHeight = "1.2em";
+
+                replacements.push({
+                    control,
+                    span,
+                    originalDisplay: control.style.display
+                });
+
+                control.style.display = "none";
+                control.parentNode.insertBefore(span, control);
+            });
 
             return replacements;
         }
 
-
-        function restoreExportFields(
-            replacements
-        ) {
-
-            replacements.forEach(
-                item => {
-
-                    item.span.remove();
-
-                    item.control
-                        .style
-                        .display =
-                        item.originalDisplay;
-
-                }
-            );
+        function restoreExportFields(replacements) {
+            replacements.forEach(item => {
+                item.span.remove();
+                item.control.style.display = item.originalDisplay;
+            });
         }
 
+        function addCanvasToPdf(pdf, canvas) {
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pageHeightMm = pdf.internal.pageSize.getHeight();
+            const fullHeightMm = (canvas.height * pdfWidth) / canvas.width;
 
-        function addCanvasToPdf(
-            pdf,
-            canvas
-        ) {
-
-            const pdfWidth =
-                pdf
-                    .internal
-                    .pageSize
-                    .getWidth();
-
-            const pageHeightMm =
-                pdf
-                    .internal
-                    .pageSize
-                    .getHeight();
-
-            const fullHeightMm =
-                (
-                    canvas.height *
-                    pdfWidth
-                ) /
-                canvas.width;
-
-            if (
-                fullHeightMm <=
-                pageHeightMm
-            ) {
-
-                pdf.addImage(
-                    canvas.toDataURL(
-                        "image/png"
-                    ),
-                    "PNG",
-                    0,
-                    0,
-                    pdfWidth,
-                    fullHeightMm
-                );
-
+            if (fullHeightMm <= pageHeightMm) {
+                pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, pdfWidth, fullHeightMm);
                 return;
             }
 
-            const pageHeightPx =
-                Math.floor(
-                    (
-                        pageHeightMm *
-                        canvas.width
-                    ) /
-                    pdfWidth
-                );
-
+            const pageHeightPx = Math.floor((pageHeightMm * canvas.width) / pdfWidth);
             let sourceY = 0;
-
             let pageIndex = 0;
 
-            while (
-                sourceY <
-                canvas.height
-            ) {
+            while (sourceY < canvas.height) {
+                const sliceHeight = Math.min(pageHeightPx, canvas.height - sourceY);
+                const pageCanvas = document.createElement("canvas");
+                pageCanvas.width = canvas.width;
+                pageCanvas.height = sliceHeight;
 
-                const sliceHeight =
-                    Math.min(
-                        pageHeightPx,
-                        canvas.height -
-                        sourceY
-                    );
-
-                const pageCanvas =
-                    document
-                        .createElement(
-                            "canvas"
-                        );
-
-                pageCanvas.width =
-                    canvas.width;
-
-                pageCanvas.height =
-                    sliceHeight;
-
-                const ctx =
-                    pageCanvas
-                        .getContext(
-                            "2d"
-                        );
-
+                const ctx = pageCanvas.getContext("2d");
                 ctx.drawImage(
                     canvas,
                     0,
@@ -3365,311 +1451,117 @@
                     sliceHeight
                 );
 
-                const sliceHeightMm =
-                    (
-                        sliceHeight *
-                        pdfWidth
-                    ) /
-                    canvas.width;
+                const sliceHeightMm = (sliceHeight * pdfWidth) / canvas.width;
 
-                if (
-                    pageIndex > 0
-                ) {
+                if (pageIndex > 0) pdf.addPage();
+                pdf.addImage(pageCanvas.toDataURL("image/png"), "PNG", 0, 0, pdfWidth, sliceHeightMm);
 
-                    pdf.addPage();
-
-                }
-
-                pdf.addImage(
-                    pageCanvas
-                        .toDataURL(
-                            "image/png"
-                        ),
-                    "PNG",
-                    0,
-                    0,
-                    pdfWidth,
-                    sliceHeightMm
-                );
-
-                sourceY +=
-                    sliceHeight;
-
+                sourceY += sliceHeight;
                 pageIndex += 1;
             }
         }
 
-
-        async function exportInvoice(
-            format
-        ) {
-
+        async function exportInvoice(format) {
             resetInactivityTimer();
 
-            if (!isUnlocked) {
+            if (!isUnlocked) return;
+            if (!window.html2canvas || !window.jspdf) {
+                alert("Export libraries did not load. Please check the internet connection and reload the page.");
                 return;
             }
 
-            if (
-                !window.html2canvas ||
-                !window.jspdf
-            ) {
-
-                alert(
-                    "Export libraries did not load. Please check the internet connection and reload the page."
-                );
-
+            if (!getStrictDisplayedDate()) {
+                alert("Please enter a valid invoice date before exporting.");
                 return;
             }
 
-            if (
-                !getStrictDisplayedDate()
-            ) {
-
-                alert(
-                    "Please enter a valid invoice date before exporting."
-                );
-
-                return;
+            if (!(invoiceNoEl?.value || "").trim()) {
+                invoiceNoManuallyEdited = false;
+                invoiceNumberCommitted = false;
+                setInvoiceNumberPreview({ force: true });
             }
 
-            if (
-                !(
-                    invoiceNoEl
-                        ?.value ||
-                    ""
-                ).trim()
-            ) {
-
-                invoiceNoManuallyEdited =
-                    false;
-
-                invoiceNumberCommitted =
-                    false;
-
-                setInvoiceNumberPreview({
-                    force: true
-                });
-            }
-
-            normalizePercentInput(
-                discountEl
-            );
-
-            normalizePercentInput(
-                taxEl
-            );
-
+            normalizePercentInput(discountEl);
+            normalizePercentInput(taxEl);
             updateTotal();
 
-            setExportBusy(
-                true,
-                format
-            );
-
+            setExportBusy(true, format);
             clearInactivityTimer();
 
-            const element =
-                document
-                    .getElementById(
-                        "invoice-wrapper"
-                    );
-
-            let replacements =
-                [];
-
-            const previousInlineWidth =
-                element
-                    .style
-                    .width;
-
-            const previousInlineMaxWidth =
-                element
-                    .style
-                    .maxWidth;
+            const element = document.getElementById("invoice-wrapper");
+            let replacements = [];
+            const previousInlineWidth = element.style.width;
+            const previousInlineMaxWidth = element.style.maxWidth;
 
             try {
-
                 commitInvoiceNumberIfNeeded();
-
                 saveDraft();
-
                 resizeAllTextareas();
 
-                if (
-                    document.fonts &&
-                    document.fonts.ready
-                ) {
-
-                    try {
-
-                        await document
-                            .fonts
-                            .ready;
-
-                    } catch (_) { }
-
+                if (document.fonts && document.fonts.ready) {
+                    try { await document.fonts.ready; } catch (_) { }
                 }
 
-                await waitForImages(
-                    element
-                );
+                await waitForImages(element);
 
-                document.body
-                    .classList
-                    .add(
-                        "exporting"
-                    );
+                document.body.classList.add("exporting");
+                element.style.width = "850px";
+                element.style.maxWidth = "850px";
 
-                element.style.width =
-                    "850px";
+                replacements = replaceFieldsForExport(element);
 
-                element.style.maxWidth =
-                    "850px";
+                const canvas = await html2canvas(element, {
+                    scale: 3,
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                    windowWidth: 900,
+                    scrollX: -window.scrollX,
+                    scrollY: -window.scrollY,
+                    logging: false
+                });
 
-                replacements =
-                    replaceFieldsForExport(
-                        element
-                    );
+                const baseName = buildExportBaseName();
 
-                const canvas =
-                    await html2canvas(
-                        element,
-                        {
-                            scale: 3,
-                            useCORS: true,
-                            backgroundColor: "#ffffff",
-                            windowWidth: 900,
-                            scrollX: -window.scrollX,
-                            scrollY: -window.scrollY,
-                            logging: false
-                        }
-                    );
-
-                const baseName =
-                    buildExportBaseName();
-
-                if (
-                    format === "pdf"
-                ) {
-
-                    const {
-                        jsPDF
-                    } =
-                        window.jspdf;
-
-                    const pdf =
-                        new jsPDF(
-                            "p",
-                            "mm",
-                            "a4"
-                        );
-
-                    addCanvasToPdf(
-                        pdf,
-                        canvas
-                    );
-
-                    pdf.save(
-                        `${baseName}.pdf`
-                    );
-
+                if (format === "pdf") {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF("p", "mm", "a4");
+                    addCanvasToPdf(pdf, canvas);
+                    pdf.save(`${baseName}.pdf`);
                 } else {
-
-                    const link =
-                        document
-                            .createElement(
-                                "a"
-                            );
-
-                    link.download =
-                        `${baseName}.png`;
-
-                    link.href =
-                        canvas.toDataURL(
-                            "image/png"
-                        );
-
-                    document.body
-                        .appendChild(
-                            link
-                        );
-
+                    const link = document.createElement("a");
+                    link.download = `${baseName}.png`;
+                    link.href = canvas.toDataURL("image/png");
+                    document.body.appendChild(link);
                     link.click();
-
                     link.remove();
                 }
-
             } catch (error) {
-
-                console.error(
-                    "Invoice export failed:",
-                    error
-                );
-
-                alert(
-                    "The invoice could not be generated. Please reload the page and try again."
-                );
-
+                console.error("Invoice export failed:", error);
+                alert("The invoice could not be generated. Please reload the page and try again.");
             } finally {
-
-                restoreExportFields(
-                    replacements
-                );
-
-                element.style.width =
-                    previousInlineWidth;
-
-                element.style.maxWidth =
-                    previousInlineMaxWidth;
-
-                document.body
-                    .classList
-                    .remove(
-                        "exporting"
-                    );
-
-                setExportBusy(
-                    false,
-                    format
-                );
-
+                restoreExportFields(replacements);
+                element.style.width = previousInlineWidth;
+                element.style.maxWidth = previousInlineMaxWidth;
+                document.body.classList.remove("exporting");
+                setExportBusy(false, format);
                 resizeAllTextareas();
-
                 resetInactivityTimer();
             }
         }
 
-
         // =====================================================
         // INITIALIZATION
         // =====================================================
+        window.addEventListener("load", () => {
+            loadBusinessSettings();
+            restoreDraft();
+            initializeCurrency();
+            resizeAllTextareas();
+            updateTotal();
 
-        window.addEventListener(
-            "load",
-            () => {
-
-                loadBusinessSettings();
-
-                restoreDraft();
-
-                initializeCurrency();
-
-                resizeAllTextareas();
-
-                updateTotal();
-
-                setTimeout(
-                    () =>
-                        passInput.focus(),
-                    100
-                );
-
-            }
-        );
-
+            setTimeout(() => passInput.focus(), 100);
+        });
     </script>
-
 </body>
 
 </html>
