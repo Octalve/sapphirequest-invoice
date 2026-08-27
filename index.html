@@ -5,9 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sapphire Quest - Pro Invoice</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="shortcut icon" href="/SapphireQuestIcon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="SapphireQuestIcon.png" type="image/x-icon">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -37,13 +38,11 @@
             overflow: hidden;
         }
 
-        /* HIDDEN BY DEFAULT FOR SECURITY */
         #main-app,
         #toolbar-app {
             display: none;
         }
 
-        /* SECURITY MODAL STYLES */
         #security-overlay {
             position: fixed;
             inset: 0;
@@ -52,6 +51,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
 
         .lock-card {
@@ -100,7 +100,6 @@
             }
         }
 
-        /* WATERMARK */
         .watermark {
             position: absolute;
             top: 50%;
@@ -123,8 +122,13 @@
         }
 
         input,
-        textarea {
+        textarea,
+        select {
             outline: none;
+        }
+
+        #invoice-wrapper input,
+        #invoice-wrapper textarea {
             border: none;
             background: transparent;
             width: 100%;
@@ -135,6 +139,52 @@
         textarea {
             resize: none;
             overflow: hidden;
+        }
+
+        .row-tint {
+            background-color: #F8FAFF;
+        }
+
+        .border-heavy {
+            border: 2px solid #000;
+        }
+
+        .static-company-info {
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .export-value {
+            white-space: pre-wrap;
+            word-break: break-word;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.62);
+            z-index: 10020;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        #export-status {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 10030;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        body.exporting #invoice-wrapper {
+            transform: none !important;
+            box-shadow: none !important;
         }
 
         @media (max-width: 768px) {
@@ -152,14 +202,6 @@
                 width: 100% !important;
             }
         }
-
-        .row-tint {
-            background-color: #F8FAFF;
-        }
-
-        .border-heavy {
-            border: 2px solid #000;
-        }
     </style>
 </head>
 
@@ -168,21 +210,21 @@
     <!-- LOCK OVERLAY -->
     <div id="security-overlay">
         <div class="lock-card">
-            <!-- Keep icon + add Logo after it (do not remove what was there) -->
             <div class="flex items-center justify-center gap-3 mx-auto mb-4">
                 <div class="brand-blue w-16 h-16 rounded-full pill-center">
                     <i class="fa-solid fa-lock text-white text-2xl"></i>
                 </div>
 
                 <div class="flex flex-col items-center">
-                    <!-- <span class="text-[11px] font-black text-gray-500 leading-none mb-1">Logo</span> -->
                     <img src="SapphireQuest.png" alt="Company Logo" class="h-12 object-contain">
                 </div>
             </div>
 
             <h2 class="text-2xl font-black text-gray-800 mb-2">Access Portal</h2>
-            <p class="text-gray-500 text-sm mb-8">Enter the secure 4-digit code to open the Sapphire Quest Invoice
-                System.</p>
+
+            <p class="text-gray-500 text-sm mb-8">
+                Enter the secure 4-digit code to open the Sapphire Quest Invoice System.
+            </p>
 
             <input type="password" id="accessCode" maxlength="4" inputmode="numeric" autocomplete="off"
                 placeholder="****" class="pass-input">
@@ -192,43 +234,67 @@
                 UNLOCK SYSTEM
             </button>
 
-            <p id="error-text" class="text-red-500 text-xs font-bold mt-4 opacity-0">INCORRECT CODE. ACCESS DENIED.</p>
+            <p id="error-text" class="text-red-500 text-xs font-bold mt-4 opacity-0">
+                INCORRECT CODE. ACCESS DENIED.
+            </p>
         </div>
     </div>
 
     <!-- TOOLBAR -->
     <div id="toolbar-app"
         class="max-w-[850px] mx-auto mb-6 flex flex-wrap justify-between items-center bg-white p-4 rounded-xl shadow-sm gap-4">
-        <!-- LEFT ACTIONS (Add Row / Remove / Clear Invoice) -->
-        <div class="flex gap-2 flex-wrap">
+        <div class="flex gap-2 flex-wrap items-center">
             <button onclick="addRow()"
                 class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg font-bold hover:bg-blue-100 transition">
                 <i class="fa-solid fa-plus mr-2"></i>Add Row
             </button>
+
             <button onclick="removeRow()"
                 class="bg-red-50 text-red-700 px-4 py-2 rounded-lg font-bold hover:bg-red-100 transition">
                 <i class="fa-solid fa-trash mr-2"></i>Remove
             </button>
-            <button onclick="clearInvoice()"
+
+            <button onclick="openNewInvoiceModal()"
                 class="bg-gray-50 text-gray-800 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition border border-gray-200">
-                <i class="fa-solid fa-eraser mr-2"></i>Clear Invoice
+                <i class="fa-solid fa-file-circle-plus mr-2"></i>New Invoice
+            </button>
+
+            <button id="extraDetailsBtn" onclick="toggleExtraDetails()"
+                class="bg-gray-50 text-gray-800 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition border border-gray-200">
+                <i class="fa-solid fa-file-lines mr-2"></i>Extra Details
             </button>
         </div>
 
-        <!-- RIGHT ACTIONS (Lock / PDF / PNG) -->
-        <div class="flex gap-2">
+        <div class="flex gap-2 flex-wrap items-center">
+
+            <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 px-3 py-2 rounded-lg">
+                <i class="fa-solid fa-money-bill-wave text-brand-blue"></i>
+
+                <label for="currencySelect" class="text-xs font-black text-gray-500 uppercase">
+                    Currency
+                </label>
+
+                <select id="currencySelect" onchange="changeCurrency()"
+                    class="bg-transparent font-bold text-gray-800 cursor-pointer">
+                    <option value="NGN">NGN ₦</option>
+                    <option value="USD">USD $</option>
+                    <option value="GBP">GBP £</option>
+                    <option value="EUR">EUR €</option>
+                </select>
+            </div>
+
             <button onclick="lockSystem('manual')"
-                class="bg-white border border-gray-300 text-gray-900 px-6 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-50 transition">
+                class="bg-white border border-gray-300 text-gray-900 px-5 py-2 rounded-lg font-bold shadow-sm hover:bg-gray-50 transition">
                 <i class="fa-solid fa-lock mr-2"></i>Lock
             </button>
 
-            <button onclick="exportInvoice('pdf')"
-                class="brand-blue text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:opacity-90 transition">
+            <button id="pdfBtn" onclick="exportInvoice('pdf')"
+                class="brand-blue text-white px-5 py-2 rounded-lg font-bold shadow-lg hover:opacity-90 transition">
                 Generate PDF
             </button>
 
-            <button onclick="exportInvoice('png')"
-                class="bg-gray-800 text-white px-6 py-2 rounded-lg font-bold shadow-lg">
+            <button id="pngBtn" onclick="exportInvoice('png')"
+                class="bg-gray-800 text-white px-5 py-2 rounded-lg font-bold shadow-lg hover:bg-black transition">
                 PNG
             </button>
         </div>
@@ -237,594 +303,3373 @@
     <!-- MAIN APP -->
     <div id="main-app">
         <div id="invoice-wrapper" class="shadow-2xl flex flex-col p-4 md:p-10">
+
             <div class="watermark">OFFICIAL INVOICE</div>
 
+            <!-- HEADER -->
             <div class="flex mobile-stack justify-between items-start mb-8 relative z-10">
+
                 <div class="mobile-full text-center md:text-left">
                     <img src="SapphireQuest.png" alt="Logo" class="h-20 md:h-28 object-contain mx-auto md:mx-0">
                 </div>
+
                 <div class="brand-blue rounded-full w-full md:w-[380px] h-32 pill-center mobile-full">
-                    <h1 class="text-white text-5xl md:text-6xl font-bold tracking-widest mt-[-38px]">INVOICE</h1>
+                    <h1 class="text-white text-5xl md:text-6xl font-bold tracking-widest mt-[-38px]">
+                        INVOICE
+                    </h1>
                 </div>
             </div>
 
+            <!-- FIXED COMPANY DETAILS -->
             <div class="flex flex-wrap justify-between items-center border-b pb-6 mb-8 gap-2 px-2 relative z-10">
+
                 <div class="flex items-center gap-2">
                     <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
-                    <input value="09162974349" class="font-bold text-gray-800 w-32">
+                    <span class="static-company-info font-bold text-gray-800 w-32">
+                        09162974349
+                    </span>
                 </div>
+
                 <div class="flex items-center gap-1">
                     <i class="fa-brands fa-instagram text-pink-600"></i>
                     <i class="fa-brands fa-facebook text-blue-600"></i>
-                    <input value="sapphirequesttravel" class="font-bold text-gray-800 w-40">
+
+                    <span class="static-company-info font-bold text-gray-800 w-40">
+                        sapphirequesttravel
+                    </span>
                 </div>
-                <div class="flex items-center gap-2">
+
+                <div class="flex items-center gap-2 mobile-full md:w-auto">
                     <i class="fa-solid fa-envelope text-red-500"></i>
-                    <input value="info@sapphirequesttravel.com"
-                        class="font-bold text-gray-800 w-60 text-right mobile-full">
+
+                    <span class="static-company-info font-bold text-gray-800 md:w-60 md:text-right mobile-full">
+                        info@sapphirequesttravel.com
+                    </span>
                 </div>
             </div>
 
+            <!-- CLIENT + INVOICE META -->
             <div class="flex mobile-stack justify-between gap-10 mb-10 relative z-10">
+
                 <div class="flex-grow space-y-4">
+
                     <div class="flex border-b-2 border-gray-300 pb-1 items-center">
                         <span class="w-24 text-gray-500 font-bold text-sm">Name:</span>
-                        <input id="clientName" class="font-bold text-lg" placeholder="Client Name">
+
+                        <input id="clientName" class="font-bold text-lg" placeholder="Client Name" autocomplete="off">
                     </div>
+
                     <div class="flex border-b-2 border-gray-300 pb-1 items-center">
-                        <span class="w-24 text-gray-500 font-bold text-sm">Telephone:</span>
-                        <input id="clientPhone" class="font-bold text-lg" placeholder="Phone">
+                        <span class="w-24 text-gray-500 font-bold text-sm">
+                            Telephone:
+                        </span>
+
+                        <input id="clientPhone" class="font-bold text-lg" placeholder="Phone" inputmode="tel"
+                            autocomplete="off">
                     </div>
+
                     <div class="flex border-b-2 border-gray-300 pb-1 items-center">
-                        <span class="w-24 text-gray-500 font-bold text-sm">Address:</span>
-                        <input id="clientAddress" class="font-bold text-lg" placeholder="Address">
+                        <span class="w-24 text-gray-500 font-bold text-sm">
+                            Address:
+                        </span>
+
+                        <input id="clientAddress" class="font-bold text-lg" placeholder="Address" autocomplete="off">
                     </div>
+
                 </div>
 
                 <div class="w-full md:w-72 border-heavy">
+
                     <div class="flex bg-black text-white p-3 font-black text-sm">
-                        <span class="flex-grow uppercase">Invoice No:</span>
-                        <input id="invoiceNo" value="2025/01/0028" class="text-right text-white w-28">
+
+                        <span class="flex-grow uppercase">
+                            Invoice No:
+                        </span>
+
+                        <input id="invoiceNo" value="" class="text-right text-white w-32" spellcheck="false">
                     </div>
+
                     <div class="p-2">
-                        <p class="text-[10px] font-black mb-1">DATE:</p>
+
+                        <p class="text-[10px] font-black mb-1">
+                            DATE:
+                        </p>
+
                         <div class="grid grid-cols-3 text-center border-t border-black pt-2">
+
                             <div class="border-r border-black">
-                                <p class="text-[9px] text-gray-400">DAY</p><input id="invDay" value="12"
+                                <p class="text-[9px] text-gray-400">DAY</p>
+
+                                <input id="invDay" value="" inputmode="numeric" maxlength="2"
                                     class="text-center font-black">
                             </div>
+
                             <div class="border-r border-black">
-                                <p class="text-[9px] text-gray-400">MONTH</p><input id="invMonth" value="JAN"
-                                    class="text-center font-black uppercase">
+                                <p class="text-[9px] text-gray-400">MONTH</p>
+
+                                <input id="invMonth" value="" maxlength="3" class="text-center font-black uppercase">
                             </div>
+
                             <div>
-                                <p class="text-[9px] text-gray-400">YEAR</p><input id="invYear" value="2025"
+                                <p class="text-[9px] text-gray-400">YEAR</p>
+
+                                <input id="invYear" value="" inputmode="numeric" maxlength="4"
                                     class="text-center font-black">
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- INVOICE TABLE -->
             <div class="flex-grow relative z-10">
+
                 <table class="w-full border-heavy border-collapse" id="main-table">
                     <thead>
                         <tr class="brand-blue text-white text-xs md:text-sm uppercase font-black">
-                            <th class="border-r border-white/30 p-4 w-16">S/N</th>
-                            <th class="border-r border-white/30 p-4">Service Description</th>
-                            <th class="border-r border-white/30 p-4 w-48">Price Description</th>
-                            <th class="p-4 w-40">Total (#)</th>
+
+                            <th class="border-r border-white/30 p-4 w-16">
+                                S/N
+                            </th>
+
+                            <th class="border-r border-white/30 p-4">
+                                Service Description
+                            </th>
+
+                            <th class="border-r border-white/30 p-4 w-48">
+                                Price Description
+                            </th>
+
+                            <th class="p-4 w-40">
+                                Total (<span id="currency-symbol-header">₦</span>)
+                            </th>
+
                         </tr>
                     </thead>
+
                     <tbody id="invoice-rows">
+
                         <tr class="border-t-2 border-black">
+
                             <td
-                                class="border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">
-                                1</td>
-                            <td class="border-r-2 border-black p-3">
-                                <textarea class="font-serif text-lg leading-snug" rows="2">Service Name</textarea>
+                                class="serial-cell border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">
+                                1
                             </td>
+
                             <td class="border-r-2 border-black p-3">
-                                <textarea class="font-serif text-sm italic" rows="2">Short description</textarea>
+
+                                <textarea class="service-name font-serif text-lg leading-snug" rows="2"
+                                    placeholder="Service Name"></textarea>
+
                             </td>
+
+                            <td class="border-r-2 border-black p-3">
+
+                                <textarea class="service-description font-serif text-sm italic" rows="2"
+                                    placeholder="Short description"></textarea>
+
+                            </td>
+
                             <td class="p-3 align-top">
-                                <input value="0" class="text-right text-2xl font-black item-total"
-                                    oninput="updateTotal()">
+
+                                <input value="0" inputmode="decimal" class="text-right text-2xl font-black item-total">
+
                             </td>
+
                         </tr>
+
                     </tbody>
                 </table>
             </div>
 
+            <!-- OPTIONAL PAYMENT / NOTES -->
+            <div id="extra-details-section" class="hidden mt-8 relative z-10">
+
+                <div class="grid md:grid-cols-2 gap-6 border border-gray-200 rounded-2xl p-5 bg-white/80">
+
+                    <div>
+
+                        <div class="flex items-center gap-2 mb-4">
+                            <i class="fa-solid fa-building-columns text-brand-blue"></i>
+
+                            <h3 class="font-black text-gray-800 uppercase text-sm tracking-wide">
+                                Payment Details
+                            </h3>
+                        </div>
+
+                        <div class="space-y-3 text-sm">
+
+                            <div class="flex gap-3 border-b border-gray-200 pb-2">
+                                <span class="w-28 font-bold text-gray-500">
+                                    Bank Name:
+                                </span>
+
+                                <input id="bankName" placeholder="Bank Name" class="font-bold text-gray-800">
+                            </div>
+
+                            <div class="flex gap-3 border-b border-gray-200 pb-2">
+                                <span class="w-28 font-bold text-gray-500">
+                                    Account Name:
+                                </span>
+
+                                <input id="accountName" placeholder="Account Name" class="font-bold text-gray-800">
+                            </div>
+
+                            <div class="flex gap-3 border-b border-gray-200 pb-2">
+                                <span class="w-28 font-bold text-gray-500">
+                                    Account No:
+                                </span>
+
+                                <input id="accountNumber" placeholder="Account Number" inputmode="numeric"
+                                    class="font-bold text-gray-800">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div>
+
+                        <div class="flex items-center gap-2 mb-4">
+
+                            <i class="fa-solid fa-note-sticky text-brand-blue"></i>
+
+                            <h3 class="font-black text-gray-800 uppercase text-sm tracking-wide">
+                                Notes / Terms
+                            </h3>
+
+                        </div>
+
+                        <textarea id="invoiceNotes" rows="4"
+                            placeholder="Add payment terms, validity, special notes or other invoice information..."
+                            class="min-h-[110px] border border-gray-200 rounded-xl p-3 text-sm leading-relaxed bg-gray-50/70"></textarea>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TOTALS -->
             <div class="mt-12 mb-10 flex mobile-stack justify-between items-end relative z-10">
+
                 <div class="flex flex-col gap-4 items-start">
+
                     <div class="border-heavy rounded-full px-12 py-6 pill-center mobile-full">
-                        <span class="text-3xl font-black italic tracking-tighter mt-[-28px]">THANK YOU</span>
+
+                        <span class="text-3xl font-black italic tracking-tighter mt-[-28px]">
+                            THANK YOU
+                        </span>
+
                     </div>
+
                     <div class="flex items-center gap-2 text-[10px] font-bold text-gray-400 ml-4">
+
                         <i class="fa-solid fa-shield-halved text-green-600"></i>
-                        <span>VERIFIED & SECURED DOCUMENT</span>
+
+                        <span>
+                            VERIFIED & SECURED DOCUMENT
+                        </span>
+
                     </div>
+
                 </div>
 
                 <div class="w-full md:w-80 border border-gray-200 shadow-sm bg-white/80 backdrop-blur-sm">
+
                     <div class="flex justify-between p-3 row-tint border-b border-gray-200">
-                        <span class="font-bold text-gray-600">Sub Total:</span>
-                        <span class="font-black text-lg" id="sub-total">#0</span>
+
+                        <span class="font-bold text-gray-600">
+                            Sub Total:
+                        </span>
+
+                        <span class="font-black text-lg" id="sub-total">
+                            ₦0
+                        </span>
+
                     </div>
+
                     <div class="flex justify-between p-3 border-b border-gray-200 items-center">
-                        <span class="font-bold text-gray-600">Discount (%):</span>
-                        <input type="number" id="discount-perc" value="0" class="text-right w-20 font-black"
-                            oninput="updateTotal()">
+
+                        <span class="font-bold text-gray-600">
+                            Discount (%):
+                        </span>
+
+                        <input type="number" id="discount-perc" value="0" min="0" max="100" step="0.01"
+                            class="text-right w-20 font-black percent-input">
+
                     </div>
+
                     <div class="flex justify-between p-3 border-b border-gray-200 items-center">
-                        <span class="font-bold text-gray-600">Tax (%):</span>
-                        <input type="number" id="tax-perc" value="0" class="text-right w-20 font-black"
-                            oninput="updateTotal()">
+
+                        <span class="font-bold text-gray-600">
+                            Tax (%):
+                        </span>
+
+                        <input type="number" id="tax-perc" value="0" min="0" max="100" step="0.01"
+                            class="text-right w-20 font-black percent-input">
+
                     </div>
+
                     <div class="flex justify-between p-4 bg-white">
-                        <span class="font-black brand-blue text-white px-2 py-1 rounded">TOTAL:</span>
-                        <span class="font-black text-2xl" id="grand-total">#0</span>
+
+                        <span class="font-black brand-blue text-white px-2 py-1 rounded">
+                            TOTAL:
+                        </span>
+
+                        <span class="font-black text-2xl" id="grand-total">
+                            ₦0
+                        </span>
+
                     </div>
+
                 </div>
             </div>
 
+            <!-- FIXED WEBSITE -->
             <div class="brand-blue p-8 -mx-10 -mb-10 flex justify-center mt-10 relative z-10">
+
                 <div class="bg-white rounded-full px-8 py-2 flex items-center gap-3 border-2 border-blue-200">
+
                     <i class="fa-solid fa-globe text-brand-blue mt-[-15px]"></i>
-                    <input value="sapphirequesttravel.com"
-                        class="font-black text-center w-64 uppercase tracking-widest text-sm mt-[-15px]">
+
+                    <span
+                        class="static-company-info font-black text-center w-64 uppercase tracking-widest text-sm mt-[-15px]">
+                        sapphirequesttravel.com
+                    </span>
+
                 </div>
+
             </div>
+
+        </div>
+    </div>
+
+    <!-- NEW INVOICE CONFIRMATION MODAL -->
+    <div id="new-invoice-modal" class="modal-backdrop hidden">
+
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+
+            <div class="flex items-start gap-4">
+
+                <div class="brand-blue w-12 h-12 rounded-full pill-center shrink-0">
+                    <i class="fa-solid fa-file-circle-plus text-white text-lg"></i>
+                </div>
+
+                <div>
+
+                    <h3 class="text-xl font-black text-gray-900">
+                        Start a New Invoice?
+                    </h3>
+
+                    <p class="text-sm text-gray-500 mt-2 leading-relaxed">
+                        The current client, services, amounts and notes will be cleared.
+                        Your saved payment details and selected currency will remain available.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+
+                <button onclick="closeNewInvoiceModal()"
+                    class="px-5 py-2.5 rounded-xl font-bold border border-gray-200 text-gray-700 hover:bg-gray-50">
+                    Cancel
+                </button>
+
+                <button onclick="startNewInvoice()"
+                    class="brand-blue text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:brightness-110">
+                    Start New Invoice
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- EXPORT STATUS -->
+    <div id="export-status" class="hidden">
+
+        <div class="bg-white rounded-2xl shadow-2xl px-6 py-5 flex items-center gap-4">
+
+            <i class="fa-solid fa-circle-notch fa-spin text-brand-blue text-2xl"></i>
+
+            <div>
+                <p class="font-black text-gray-900" id="export-status-title">
+                    Generating document...
+                </p>
+
+                <p class="text-xs text-gray-500 mt-1">
+                    Please keep this page open until the download starts.
+                </p>
+            </div>
+
         </div>
     </div>
 
     <script>
         "use strict";
 
-        // =========================
-        // SECURITY (NO PLAINTEXT PIN)
-        // =========================
-        const passInput = document.getElementById('accessCode');
-        const errorText = document.getElementById('error-text');
-        const unlockBtn = document.getElementById('unlockBtn');
+        // =====================================================
+        // STORAGE HELPERS
+        // =====================================================
 
+        const DRAFT_KEY = "sq_invoice_draft_v2";
+        const BUSINESS_SETTINGS_KEY = "sq_business_settings_v1";
+        const CURRENCY_KEY = "sq_currency";
 
-        const EXPECTED_HASH = [
-            "614cb3fc", "60cb6dc1", "83a042b4", "603f2a88",
-            "d5c7fdf4", "ec626f13", "b8e5121a", "f01f09ea"
-        ].join("");
-
-        let isUnlocked = false;
-        let failedAttempts = 0;
-        let lockoutUntil = 0;
-
-        function showError(msg) {
-            errorText.textContent = msg;
-            errorText.style.opacity = '1';
-            passInput.classList.add('error-shake');
-
-            setTimeout(() => {
-                passInput.classList.remove('error-shake');
-            }, 500);
-        }
-
-        function clearError() {
-            errorText.style.opacity = '0';
-            errorText.textContent = "INCORRECT CODE. ACCESS DENIED.";
-        }
-
-        function setLockout(ms) {
-            lockoutUntil = Date.now() + ms;
-            unlockBtn.disabled = true;
-            unlockBtn.classList.add("opacity-60", "cursor-not-allowed");
-
-            const tick = setInterval(() => {
-                const remaining = Math.max(0, lockoutUntil - Date.now());
-                if (remaining <= 0) {
-                    clearInterval(tick);
-                    unlockBtn.disabled = false;
-                    unlockBtn.classList.remove("opacity-60", "cursor-not-allowed");
-                    clearError();
-                } else {
-                    showError(`TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(remaining / 1000)}s.`);
-                }
-            }, 500);
-        }
-
-        async function sha256Hex(str) {
-            const enc = new TextEncoder().encode(str);
-            const buf = await crypto.subtle.digest("SHA-256", enc);
-            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
-        }
-
-        function timingSafeEqual(a, b) {
-            if (a.length !== b.length) return false;
-            let diff = 0;
-            for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-            return diff === 0;
-        }
-
-        async function verifyCode() {
-            resetInactivityTimer(); // count this as activity
-
-            if (Date.now() < lockoutUntil) return;
-
-            const code = (passInput.value || "").trim();
-
-            if (!/^\d{4}$/.test(code)) {
-                showError("ENTER A VALID 4-DIGIT CODE.");
-                passInput.value = "";
-                return;
-            }
-
-            const hashed = await sha256Hex(code);
-            const ok = timingSafeEqual(hashed, EXPECTED_HASH);
-
-            if (ok) {
-                unlockSystem();
-            } else {
-                failedAttempts += 1;
-                showError("INCORRECT CODE. ACCESS DENIED.");
-                passInput.value = "";
-
-                // basic throttle
-                if (failedAttempts >= 5) {
-                    failedAttempts = 0;
-                    setLockout(30_000); // 30 seconds
-                }
+        function storageGet(key) {
+            try {
+                return localStorage.getItem(key);
+            } catch (_) {
+                return null;
             }
         }
 
-        passInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') verifyCode();
-        });
-
-        function unlockSystem() {
-            isUnlocked = true;
-            failedAttempts = 0;
-            clearError();
-
-            document.getElementById('security-overlay').style.display = 'none';
-            document.getElementById('toolbar-app').style.display = 'flex';
-            document.getElementById('main-app').style.display = 'block';
-
-            // Auto date + auto invoice number (does not change design)
-            ensureInvoiceMetaOnUnlock();
-
-            updateTotal();
-            resetInactivityTimer();
-        }
-
-        function lockSystem(reason = "manual") {
-            isUnlocked = false;
-
-            document.getElementById('security-overlay').style.display = 'flex';
-            document.getElementById('toolbar-app').style.display = 'none';
-            document.getElementById('main-app').style.display = 'none';
-
-            passInput.value = "";
-            clearError();
-
-            // optional: subtle message change if inactivity
-            if (reason === "inactivity") {
-                showError("AUTO-LOCKED DUE TO INACTIVITY. ENTER CODE TO CONTINUE.");
+        function storageSet(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (_) {
+                return false;
             }
-
-            clearInactivityTimer();
-            // focus after overlay is visible
-            setTimeout(() => passInput.focus(), 50);
         }
 
-        // =========================
-        // AUTO-LOCK (2 MIN INACTIVITY)
-        // =========================
-        const INACTIVITY_MS = 2 * 60 * 1000;
-        let inactivityTimer = null;
-
-        function clearInactivityTimer() {
-            if (inactivityTimer) clearTimeout(inactivityTimer);
-            inactivityTimer = null;
+        function storageRemove(key) {
+            try {
+                localStorage.removeItem(key);
+            } catch (_) { }
         }
 
-        function resetInactivityTimer() {
-            if (!isUnlocked) return;
-            clearInactivityTimer();
-            inactivityTimer = setTimeout(() => lockSystem("inactivity"), INACTIVITY_MS);
-        }
 
-        // Activity listeners (mouse + keyboard + touch + scroll)
-        ["mousemove", "mousedown", "keydown", "touchstart", "touchmove", "scroll", "click"].forEach(evt => {
-            window.addEventListener(evt, resetInactivityTimer, { passive: true });
-        });
+        // =====================================================
+        // CORE DOM REFERENCES
+        // =====================================================
 
-        // =========================
-        // AUTO DATE + AUTO INVOICE NO
-        // Format: YYYY/MM/NNNN
-        // Counter resets per month (0001..), continues for that month
-        // =========================
-        const MONTHS_3 = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const passInput = document.getElementById("accessCode");
+        const errorText = document.getElementById("error-text");
+        const unlockBtn = document.getElementById("unlockBtn");
 
         const invoiceNoEl = document.getElementById("invoiceNo");
         const invDayEl = document.getElementById("invDay");
         const invMonthEl = document.getElementById("invMonth");
         const invYearEl = document.getElementById("invYear");
 
-        let dateManuallyEdited = false;
-        let invoiceNoManuallyEdited = false;
+        const clientNameEl = document.getElementById("clientName");
+        const clientPhoneEl = document.getElementById("clientPhone");
+        const clientAddressEl = document.getElementById("clientAddress");
 
-        function pad2(n) { return String(n).padStart(2, "0"); }
-        function pad4(n) { return String(n).padStart(4, "0"); }
+        const discountEl = document.getElementById("discount-perc");
+        const taxEl = document.getElementById("tax-perc");
+        const notesEl = document.getElementById("invoiceNotes");
+
+
+        // =====================================================
+        // SECURITY
+        // =====================================================
+
+        const EXPECTED_HASH = [
+            "614cb3fc",
+            "60cb6dc1",
+            "83a042b4",
+            "603f2a88",
+            "d5c7fdf4",
+            "ec626f13",
+            "b8e5121a",
+            "f01f09ea"
+        ].join("");
+
+        let isUnlocked = false;
+        let failedAttempts = 0;
+        let lockoutUntil = 0;
+
+
+        function showError(msg, shake = true) {
+
+            errorText.textContent = msg;
+            errorText.style.opacity = "1";
+
+            if (shake) {
+
+                passInput.classList.add("error-shake");
+
+                setTimeout(() => {
+                    passInput.classList.remove("error-shake");
+                }, 500);
+
+            }
+        }
+
+
+        function clearError() {
+
+            errorText.style.opacity = "0";
+
+            errorText.textContent =
+                "INCORRECT CODE. ACCESS DENIED.";
+
+        }
+
+
+        function setLockout(ms) {
+
+            lockoutUntil = Date.now() + ms;
+
+            unlockBtn.disabled = true;
+
+            unlockBtn.classList.add(
+                "opacity-60",
+                "cursor-not-allowed"
+            );
+
+            showError(
+                `TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(ms / 1000)}s.`
+            );
+
+            const tick = setInterval(() => {
+
+                const remaining =
+                    Math.max(
+                        0,
+                        lockoutUntil - Date.now()
+                    );
+
+                if (remaining <= 0) {
+
+                    clearInterval(tick);
+
+                    unlockBtn.disabled = false;
+
+                    unlockBtn.classList.remove(
+                        "opacity-60",
+                        "cursor-not-allowed"
+                    );
+
+                    clearError();
+
+                } else {
+
+                    showError(
+                        `TOO MANY ATTEMPTS. TRY AGAIN IN ${Math.ceil(remaining / 1000)}s.`,
+                        false
+                    );
+
+                }
+
+            }, 500);
+        }
+
+
+        async function sha256Hex(str) {
+
+            if (
+                !window.crypto ||
+                !window.crypto.subtle
+            ) {
+
+                throw new Error(
+                    "Web Crypto is unavailable in this browser context."
+                );
+
+            }
+
+            const enc =
+                new TextEncoder()
+                    .encode(str);
+
+            const buf =
+                await crypto.subtle.digest(
+                    "SHA-256",
+                    enc
+                );
+
+            return Array
+                .from(
+                    new Uint8Array(buf)
+                )
+                .map(
+                    byte =>
+                        byte
+                            .toString(16)
+                            .padStart(2, "0")
+                )
+                .join("");
+        }
+
+
+        function timingSafeEqual(a, b) {
+
+            if (a.length !== b.length) {
+                return false;
+            }
+
+            let diff = 0;
+
+            for (
+                let i = 0;
+                i < a.length;
+                i++
+            ) {
+
+                diff |=
+                    a.charCodeAt(i) ^
+                    b.charCodeAt(i);
+
+            }
+
+            return diff === 0;
+        }
+
+
+        async function verifyCode() {
+
+            if (
+                Date.now() <
+                lockoutUntil
+            ) {
+                return;
+            }
+
+            const code =
+                (passInput.value || "")
+                    .trim();
+
+            if (
+                !/^\d{4}$/.test(code)
+            ) {
+
+                showError(
+                    "ENTER A VALID 4-DIGIT CODE."
+                );
+
+                passInput.value = "";
+
+                return;
+            }
+
+            try {
+
+                const hashed =
+                    await sha256Hex(code);
+
+                const ok =
+                    timingSafeEqual(
+                        hashed,
+                        EXPECTED_HASH
+                    );
+
+                if (ok) {
+
+                    unlockSystem();
+
+                } else {
+
+                    failedAttempts += 1;
+
+                    showError(
+                        "INCORRECT CODE. ACCESS DENIED."
+                    );
+
+                    passInput.value = "";
+
+                    if (
+                        failedAttempts >= 5
+                    ) {
+
+                        failedAttempts = 0;
+
+                        setLockout(
+                            30_000
+                        );
+
+                    }
+                }
+
+            } catch (_) {
+
+                showError(
+                    "SECURE LOGIN REQUIRES HTTPS OR LOCALHOST.",
+                    false
+                );
+
+            }
+        }
+
+
+        passInput.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    verifyCode();
+
+                }
+
+            }
+        );
+
+
+        function unlockSystem() {
+
+            isUnlocked = true;
+
+            failedAttempts = 0;
+
+            clearError();
+
+            document
+                .getElementById(
+                    "security-overlay"
+                )
+                .style.display =
+                "none";
+
+            document
+                .getElementById(
+                    "toolbar-app"
+                )
+                .style.display =
+                "flex";
+
+            document
+                .getElementById(
+                    "main-app"
+                )
+                .style.display =
+                "block";
+
+            ensureInvoiceMetaOnUnlock();
+
+            initializeCurrency();
+
+            resizeAllTextareas();
+
+            updateTotal();
+
+            saveDraft();
+
+            resetInactivityTimer();
+        }
+
+
+        function lockSystem(
+            reason = "manual"
+        ) {
+
+            isUnlocked = false;
+
+            document
+                .getElementById(
+                    "security-overlay"
+                )
+                .style.display =
+                "flex";
+
+            document
+                .getElementById(
+                    "toolbar-app"
+                )
+                .style.display =
+                "none";
+
+            document
+                .getElementById(
+                    "main-app"
+                )
+                .style.display =
+                "none";
+
+            passInput.value = "";
+
+            clearError();
+
+            if (
+                reason ===
+                "inactivity"
+            ) {
+
+                showError(
+                    "AUTO-LOCKED DUE TO INACTIVITY. ENTER CODE TO CONTINUE.",
+                    false
+                );
+
+            }
+
+            clearInactivityTimer();
+
+            closeNewInvoiceModal();
+
+            setTimeout(
+                () =>
+                    passInput.focus(),
+                50
+            );
+        }
+
+
+        // =====================================================
+        // AUTO-LOCK
+        // =====================================================
+
+        const INACTIVITY_MS =
+            2 * 60 * 1000;
+
+        let inactivityTimer = null;
+
+
+        function clearInactivityTimer() {
+
+            if (inactivityTimer) {
+                clearTimeout(
+                    inactivityTimer
+                );
+            }
+
+            inactivityTimer = null;
+        }
+
+
+        function resetInactivityTimer() {
+
+            if (!isUnlocked) {
+                return;
+            }
+
+            clearInactivityTimer();
+
+            inactivityTimer =
+                setTimeout(
+                    () =>
+                        lockSystem(
+                            "inactivity"
+                        ),
+                    INACTIVITY_MS
+                );
+        }
+
+
+        [
+            "mousemove",
+            "mousedown",
+            "keydown",
+            "touchstart",
+            "touchmove",
+            "scroll",
+            "click"
+        ].forEach(
+            eventName => {
+
+                window.addEventListener(
+                    eventName,
+                    resetInactivityTimer,
+                    {
+                        passive: true
+                    }
+                );
+
+            }
+        );
+
+
+        // =====================================================
+        // CURRENCY
+        // =====================================================
+
+        const CURRENCIES = {
+
+            NGN: {
+                code: "NGN",
+                symbol: "₦",
+                locale: "en-NG"
+            },
+
+            USD: {
+                code: "USD",
+                symbol: "$",
+                locale: "en-US"
+            },
+
+            GBP: {
+                code: "GBP",
+                symbol: "£",
+                locale: "en-GB"
+            },
+
+            EUR: {
+                code: "EUR",
+                symbol: "€",
+                locale: "en-IE"
+            }
+
+        };
+
+
+        let currentCurrency =
+            storageGet(
+                CURRENCY_KEY
+            ) || "NGN";
+
+
+        if (
+            !CURRENCIES[
+            currentCurrency
+            ]
+        ) {
+
+            currentCurrency =
+                "NGN";
+
+        }
+
+
+        function formatNumber(
+            amount
+        ) {
+
+            return new Intl
+                .NumberFormat(
+                    CURRENCIES[
+                        currentCurrency
+                    ].locale,
+                    {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                    }
+                )
+                .format(
+                    Number(amount) || 0
+                );
+        }
+
+
+        function formatMoney(
+            amount
+        ) {
+
+            return `${CURRENCIES[currentCurrency].symbol}${formatNumber(amount)}`;
+
+        }
+
+
+        function initializeCurrency() {
+
+            const select =
+                document
+                    .getElementById(
+                        "currencySelect"
+                    );
+
+            const header =
+                document
+                    .getElementById(
+                        "currency-symbol-header"
+                    );
+
+            if (
+                !CURRENCIES[
+                currentCurrency
+                ]
+            ) {
+
+                currentCurrency =
+                    "NGN";
+
+            }
+
+            if (select) {
+
+                select.value =
+                    currentCurrency;
+
+            }
+
+            if (header) {
+
+                header.textContent =
+                    CURRENCIES[
+                        currentCurrency
+                    ].symbol;
+
+            }
+
+            updateTotal();
+        }
+
+
+        function changeCurrency() {
+
+            resetInactivityTimer();
+
+            const select =
+                document
+                    .getElementById(
+                        "currencySelect"
+                    );
+
+            if (
+                !select ||
+                !CURRENCIES[
+                select.value
+                ]
+            ) {
+
+                return;
+
+            }
+
+            currentCurrency =
+                select.value;
+
+            storageSet(
+                CURRENCY_KEY,
+                currentCurrency
+            );
+
+            initializeCurrency();
+
+            scheduleSaveDraft();
+        }
+
+
+        // =====================================================
+        // DATE + INVOICE NUMBERING
+        // =====================================================
+
+        const MONTHS_3 = [
+            "JAN",
+            "FEB",
+            "MAR",
+            "APR",
+            "MAY",
+            "JUN",
+            "JUL",
+            "AUG",
+            "SEP",
+            "OCT",
+            "NOV",
+            "DEC"
+        ];
+
+
+        let dateManuallyEdited =
+            false;
+
+        let invoiceNoManuallyEdited =
+            false;
+
+        let invoiceNumberCommitted =
+            false;
+
+        let draftRestored =
+            false;
+
+
+        function pad2(n) {
+
+            return String(n)
+                .padStart(
+                    2,
+                    "0"
+                );
+
+        }
+
+
+        function pad4(n) {
+
+            return String(n)
+                .padStart(
+                    4,
+                    "0"
+                );
+
+        }
+
+
+        function getStrictDisplayedDate() {
+
+            const y =
+                parseInt(
+                    invYearEl?.value,
+                    10
+                );
+
+            const d =
+                parseInt(
+                    invDayEl?.value,
+                    10
+                );
+
+            const m3 =
+                (
+                    invMonthEl
+                        ?.value ||
+                    ""
+                )
+                    .toUpperCase()
+                    .trim();
+
+            const mIndex =
+                MONTHS_3
+                    .indexOf(m3);
+
+            if (
+                !Number.isFinite(y) ||
+                !Number.isFinite(d) ||
+                mIndex < 0
+            ) {
+
+                return null;
+
+            }
+
+            const dt =
+                new Date(
+                    y,
+                    mIndex,
+                    d
+                );
+
+            const isStrictlyValid =
+
+                !isNaN(
+                    dt.getTime()
+                ) &&
+
+                dt.getFullYear() ===
+                y &&
+
+                dt.getMonth() ===
+                mIndex &&
+
+                dt.getDate() ===
+                d;
+
+            return isStrictlyValid
+                ? dt
+                : null;
+        }
+
 
         function getDisplayedDate() {
-            const now = new Date();
-            const y = parseInt(invYearEl?.value, 10);
-            const d = parseInt(invDayEl?.value, 10);
-            const m3 = (invMonthEl?.value || "").toUpperCase().trim();
-            const mIndex = MONTHS_3.indexOf(m3);
 
-            if (!Number.isFinite(y) || !Number.isFinite(d) || mIndex < 0) return now;
-            const dt = new Date(y, mIndex, d);
-            if (isNaN(dt.getTime())) return now;
-            return dt;
+            return (
+                getStrictDisplayedDate() ||
+                new Date()
+            );
+
         }
 
-        function setDateToToday({ force = false } = {}) {
-            if (!invDayEl || !invMonthEl || !invYearEl) return;
-            if (!force && dateManuallyEdited) return;
 
-            const now = new Date();
-            invDayEl.value = String(now.getDate());
-            invMonthEl.value = MONTHS_3[now.getMonth()];
-            invYearEl.value = String(now.getFullYear());
+        function setDateToToday({
+            force = false
+        } = {}) {
+
+            if (
+                !invDayEl ||
+                !invMonthEl ||
+                !invYearEl
+            ) {
+
+                return;
+
+            }
+
+            if (
+                !force &&
+                dateManuallyEdited
+            ) {
+
+                return;
+
+            }
+
+            const now =
+                new Date();
+
+            invDayEl.value =
+                pad2(
+                    now.getDate()
+                );
+
+            invMonthEl.value =
+                MONTHS_3[
+                now.getMonth()
+                ];
+
+            invYearEl.value =
+                String(
+                    now.getFullYear()
+                );
         }
 
-        function counterKeyFor(dateObj) {
-            const y = dateObj.getFullYear();
-            const m = pad2(dateObj.getMonth() + 1);
-            return `sq_invoice_counter_${y}_${m}`; // per month
+
+        function counterKeyFor(
+            dateObj
+        ) {
+
+            const y =
+                dateObj
+                    .getFullYear();
+
+            const m =
+                pad2(
+                    dateObj
+                        .getMonth() + 1
+                );
+
+            return `sq_invoice_counter_${y}_${m}`;
+
         }
 
-        function readCounter(dateObj) {
-            const key = counterKeyFor(dateObj);
-            const raw = localStorage.getItem(key);
-            const num = parseInt(raw, 10);
-            return Number.isFinite(num) && num >= 0 ? num : 0;
+
+        function readCounter(
+            dateObj
+        ) {
+
+            const raw =
+                storageGet(
+                    counterKeyFor(
+                        dateObj
+                    )
+                );
+
+            const num =
+                parseInt(
+                    raw,
+                    10
+                );
+
+            return (
+                Number.isFinite(num) &&
+                num >= 0
+            )
+                ? num
+                : 0;
         }
 
-        function writeCounter(dateObj, value) {
-            const key = counterKeyFor(dateObj);
-            localStorage.setItem(key, String(value));
+
+        function writeCounter(
+            dateObj,
+            value
+        ) {
+
+            storageSet(
+                counterKeyFor(
+                    dateObj
+                ),
+                String(value)
+            );
+
         }
 
-        function formatInvoiceNo(dateObj, seqNum) {
-            const y = dateObj.getFullYear();
-            const m = pad2(dateObj.getMonth() + 1);
-            const seq = pad4(seqNum);
-            return `${y}/${m}/${seq}`;
+
+        function formatInvoiceNo(
+            dateObj,
+            seqNum
+        ) {
+
+            const y =
+                dateObj
+                    .getFullYear();
+
+            const m =
+                pad2(
+                    dateObj
+                        .getMonth() + 1
+                );
+
+            return `${y}/${m}/${pad4(seqNum)}`;
+
         }
 
-        function issueNewInvoiceNumber({ force = false } = {}) {
-            if (!invoiceNoEl) return;
-            if (!force && invoiceNoManuallyEdited) return;
 
-            const dt = getDisplayedDate();
-            const current = readCounter(dt);
-            const next = current + 1;
+        function setInvoiceNumberPreview({
+            force = false
+        } = {}) {
 
-            writeCounter(dt, next);
-            invoiceNoEl.value = formatInvoiceNo(dt, next);
+            if (!invoiceNoEl) {
+                return;
+            }
+
+            if (
+                !force &&
+                (
+                    invoiceNoManuallyEdited ||
+                    invoiceNumberCommitted
+                )
+            ) {
+
+                return;
+
+            }
+
+            const dt =
+                getDisplayedDate();
+
+            const next =
+                readCounter(dt) + 1;
+
+            invoiceNoEl.value =
+                formatInvoiceNo(
+                    dt,
+                    next
+                );
         }
+
+
+        function commitInvoiceNumberIfNeeded() {
+
+            if (
+                invoiceNoManuallyEdited ||
+                invoiceNumberCommitted
+            ) {
+
+                return;
+
+            }
+
+            const dt =
+                getDisplayedDate();
+
+            const next =
+                readCounter(dt) + 1;
+
+            invoiceNoEl.value =
+                formatInvoiceNo(
+                    dt,
+                    next
+                );
+
+            writeCounter(
+                dt,
+                next
+            );
+
+            invoiceNumberCommitted =
+                true;
+
+            saveDraft();
+        }
+
 
         function ensureInvoiceMetaOnUnlock() {
-            setDateToToday({ force: false });
 
-            const hasInvoice = (invoiceNoEl?.value || "").trim().length > 0;
-            if (!hasInvoice) {
-                issueNewInvoiceNumber({ force: true });
+            if (
+                !draftRestored
+            ) {
+
+                setDateToToday({
+                    force: false
+                });
+
             }
 
-            // if the existing invoiceNo is an old default, replace it with the next for this month (first unlock only)
-            // This keeps your UI unchanged but makes invoice number “auto” in practice.
-            if (!invoiceNoManuallyEdited && invoiceNoEl && invoiceNoEl.value.trim() === "2025/01/0028") {
-                issueNewInvoiceNumber({ force: true });
+            if (
+                !(
+                    invoiceNoEl
+                        .value ||
+                    ""
+                ).trim()
+            ) {
+
+                setInvoiceNumberPreview({
+                    force: true
+                });
+
             }
         }
 
-        // Mark manual edits so we don't overwrite user choices
-        if (invDayEl) invDayEl.addEventListener("input", () => { dateManuallyEdited = true; });
-        if (invMonthEl) invMonthEl.addEventListener("input", () => { dateManuallyEdited = true; });
-        if (invYearEl) invYearEl.addEventListener("input", () => { dateManuallyEdited = true; });
 
-        if (invoiceNoEl) invoiceNoEl.addEventListener("input", () => { invoiceNoManuallyEdited = true; });
+        [
+            invDayEl,
+            invMonthEl,
+            invYearEl
+        ].forEach(
+            element => {
 
-        function updateInvoiceNoPreviewFromDate() {
-            if (!invoiceNoEl) return;
-            if (invoiceNoManuallyEdited) return;
+                if (!element) {
+                    return;
+                }
 
-            const dt = getDisplayedDate();
-            const current = readCounter(dt);
-            const previewSeq = Math.max(1, current + 1);
-            invoiceNoEl.value = formatInvoiceNo(dt, previewSeq);
+                element
+                    .addEventListener(
+                        "input",
+                        () => {
+
+                            dateManuallyEdited =
+                                true;
+
+                            scheduleSaveDraft();
+
+                        }
+                    );
+
+                element
+                    .addEventListener(
+                        "change",
+                        () => {
+
+                            if (
+                                !invoiceNoManuallyEdited &&
+                                !invoiceNumberCommitted
+                            ) {
+
+                                setInvoiceNumberPreview({
+                                    force: true
+                                });
+
+                            }
+
+                            scheduleSaveDraft();
+
+                        }
+                    );
+
+            }
+        );
+
+
+        if (invoiceNoEl) {
+
+            invoiceNoEl
+                .addEventListener(
+                    "input",
+                    () => {
+
+                        invoiceNoManuallyEdited =
+                            true;
+
+                        invoiceNumberCommitted =
+                            true;
+
+                        scheduleSaveDraft();
+
+                    }
+                );
+
         }
 
-        if (invDayEl) invDayEl.addEventListener("change", updateInvoiceNoPreviewFromDate);
-        if (invMonthEl) invMonthEl.addEventListener("change", updateInvoiceNoPreviewFromDate);
-        if (invYearEl) invYearEl.addEventListener("change", updateInvoiceNoPreviewFromDate);
 
-        // =========================
-        // INVOICE LOGIC
-        // =========================
+        // =====================================================
+        // INVOICE ROWS
+        // =====================================================
+
+        function createInvoiceRow(
+            rowNumber,
+            data = {}
+        ) {
+
+            const tr =
+                document
+                    .createElement(
+                        "tr"
+                    );
+
+            tr.className =
+                `border-t-2 border-black ${rowNumber % 2 === 0
+                    ? "row-tint"
+                    : ""
+                }`;
+
+            tr.innerHTML = `
+                <td class="serial-cell border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">${rowNumber}</td>
+
+                <td class="border-r-2 border-black p-3">
+                    <textarea class="service-name font-serif text-lg leading-snug" rows="2" placeholder="Service Name"></textarea>
+                </td>
+
+                <td class="border-r-2 border-black p-3">
+                    <textarea class="service-description font-serif text-sm italic" rows="2" placeholder="Short description"></textarea>
+                </td>
+
+                <td class="p-3 align-top">
+                    <input value="0" inputmode="decimal" class="text-right text-2xl font-black item-total">
+                </td>
+            `;
+
+            tr
+                .querySelector(
+                    ".service-name"
+                )
+                .value =
+                data.serviceName ||
+                "";
+
+            tr
+                .querySelector(
+                    ".service-description"
+                )
+                .value =
+                data.description ||
+                "";
+
+            tr
+                .querySelector(
+                    ".item-total"
+                )
+                .value =
+                data.total ??
+                "0";
+
+            return tr;
+        }
+
+
+        function renumberRows() {
+
+            const rows =
+                document
+                    .querySelectorAll(
+                        "#invoice-rows tr"
+                    );
+
+            rows.forEach(
+                (
+                    row,
+                    index
+                ) => {
+
+                    const number =
+                        index + 1;
+
+                    const serial =
+                        row
+                            .querySelector(
+                                ".serial-cell"
+                            );
+
+                    if (serial) {
+
+                        serial.textContent =
+                            number;
+
+                    }
+
+                    row.classList
+                        .toggle(
+                            "row-tint",
+                            number % 2 === 0
+                        );
+
+                }
+            );
+        }
+
+
         function addRow() {
+
             resetInactivityTimer();
 
-            const tbody = document.getElementById('invoice-rows');
-            const rowCount = tbody.children.length + 1;
-            const tr = document.createElement('tr');
-            tr.className = `border-t-2 border-black ${rowCount % 2 === 0 ? 'row-tint' : ''}`;
-            tr.innerHTML = `
-                <td class="border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">${rowCount}</td>
-                <td class="border-r-2 border-black p-3"><textarea class="font-serif text-lg leading-snug" rows="2"></textarea></td>
-                <td class="border-r-2 border-black p-3"><textarea class="font-serif text-sm italic" rows="2"></textarea></td>
-                <td class="p-3 align-top"><input value="0" class="text-right text-2xl font-black item-total" oninput="updateTotal()"></td>
-            `;
+            const tbody =
+                document
+                    .getElementById(
+                        "invoice-rows"
+                    );
+
+            const rowNumber =
+                tbody.children.length +
+                1;
+
+            const tr =
+                createInvoiceRow(
+                    rowNumber
+                );
+
             tbody.appendChild(tr);
+
+            resizeAllTextareas();
+
+            scheduleSaveDraft();
         }
+
 
         function removeRow() {
+
             resetInactivityTimer();
 
-            const tbody = document.getElementById('invoice-rows');
-            if (tbody.children.length > 1) tbody.removeChild(tbody.lastElementChild);
-            updateTotal();
+            const tbody =
+                document
+                    .getElementById(
+                        "invoice-rows"
+                    );
+
+            if (
+                tbody.children.length >
+                1
+            ) {
+
+                tbody.removeChild(
+                    tbody
+                        .lastElementChild
+                );
+
+                renumberRows();
+
+                updateTotal();
+
+                scheduleSaveDraft();
+            }
         }
+
+
+        // =====================================================
+        // MONEY + TOTALS
+        // =====================================================
+
+        function parseMoneyInput(
+            value
+        ) {
+
+            const cleaned =
+                String(
+                    value ?? ""
+                )
+                    .replace(
+                        /,/g,
+                        ""
+                    )
+                    .replace(
+                        /[^\d.]/g,
+                        ""
+                    );
+
+            if (!cleaned) {
+                return 0;
+            }
+
+            const firstDot =
+                cleaned
+                    .indexOf(".");
+
+            const normalized =
+                firstDot === -1
+                    ? cleaned
+                    :
+                    cleaned.slice(
+                        0,
+                        firstDot + 1
+                    ) +
+                    cleaned
+                        .slice(
+                            firstDot + 1
+                        )
+                        .replace(
+                            /\./g,
+                            ""
+                        );
+
+            return (
+                parseFloat(
+                    normalized
+                ) || 0
+            );
+        }
+
+
+        function formatAmountInput(
+            input
+        ) {
+
+            const value =
+                parseMoneyInput(
+                    input.value
+                );
+
+            input.value =
+                formatNumber(
+                    value
+                );
+        }
+
+
+        function clampPercent(
+            value
+        ) {
+
+            const numeric =
+                parseFloat(
+                    value
+                ) || 0;
+
+            return Math.min(
+                Math.max(
+                    numeric,
+                    0
+                ),
+                100
+            );
+        }
+
+
+        function normalizePercentInput(
+            input
+        ) {
+
+            input.value =
+                String(
+                    clampPercent(
+                        input.value
+                    )
+                );
+        }
+
 
         function updateTotal() {
+
             let subtotal = 0;
-            document.querySelectorAll('.item-total').forEach(input => {
-                let val = (input.value || "").toString().replace(/,/g, '');
-                subtotal += parseFloat(val) || 0;
-            });
 
-            const discountPerc = parseFloat(document.getElementById('discount-perc').value) || 0;
-            const taxPerc = parseFloat(document.getElementById('tax-perc').value) || 0;
+            document
+                .querySelectorAll(
+                    ".item-total"
+                )
+                .forEach(
+                    input => {
 
-            const discountAmount = subtotal * (discountPerc / 100);
-            const subAfterDiscount = subtotal - discountAmount;
-            const taxAmount = subAfterDiscount * (taxPerc / 100);
-            const total = subAfterDiscount + taxAmount;
+                        subtotal +=
+                            parseMoneyInput(
+                                input.value
+                            );
 
-            document.getElementById('sub-total').innerText = '#' + subtotal.toLocaleString();
-            document.getElementById('grand-total').innerText = '#' + total.toLocaleString();
+                    }
+                );
+
+            const discountPerc =
+                clampPercent(
+                    discountEl
+                        ?.value
+                );
+
+            const taxPerc =
+                clampPercent(
+                    taxEl
+                        ?.value
+                );
+
+            const discountAmount =
+                subtotal *
+                (
+                    discountPerc /
+                    100
+                );
+
+            const subAfterDiscount =
+                subtotal -
+                discountAmount;
+
+            const taxAmount =
+                subAfterDiscount *
+                (
+                    taxPerc /
+                    100
+                );
+
+            const total =
+                subAfterDiscount +
+                taxAmount;
+
+            document
+                .getElementById(
+                    "sub-total"
+                )
+                .innerText =
+                formatMoney(
+                    subtotal
+                );
+
+            document
+                .getElementById(
+                    "grand-total"
+                )
+                .innerText =
+                formatMoney(
+                    total
+                );
         }
 
-        // =========================
-        // CLEAR INVOICE (keeps design)
-        // - Clears client fields, rows reset to 1, discount/tax reset
-        // - Sets today's date
-        // - Issues next invoice number for current month (0001..)
-        // =========================
-        function clearInvoice() {
-            resetInactivityTimer();
 
-            const nameEl = document.getElementById("clientName");
-            const phoneEl = document.getElementById("clientPhone");
-            const addrEl = document.getElementById("clientAddress");
+        // =====================================================
+        // AUTO-GROW TEXTAREAS
+        // =====================================================
 
-            if (nameEl) nameEl.value = "";
-            if (phoneEl) phoneEl.value = "";
-            if (addrEl) addrEl.value = "";
+        function autoResizeTextarea(
+            textarea
+        ) {
 
-            const discountEl = document.getElementById("discount-perc");
-            const taxEl = document.getElementById("tax-perc");
-            if (discountEl) discountEl.value = 0;
-            if (taxEl) taxEl.value = 0;
-
-            const tbody = document.getElementById("invoice-rows");
-            if (tbody) {
-                while (tbody.children.length > 0) tbody.removeChild(tbody.lastElementChild);
-
-                const tr = document.createElement("tr");
-                tr.className = "border-t-2 border-black";
-                tr.innerHTML = `
-                    <td class="border-r-2 border-black p-4 text-center text-4xl font-black italic text-gray-200">1</td>
-                    <td class="border-r-2 border-black p-3">
-                        <textarea class="font-serif text-lg leading-snug" rows="2">Service Name</textarea>
-                    </td>
-                    <td class="border-r-2 border-black p-3">
-                        <textarea class="font-serif text-sm italic" rows="2">Short description</textarea>
-                    </td>
-                    <td class="p-3 align-top">
-                        <input value="0" class="text-right text-2xl font-black item-total" oninput="updateTotal()">
-                    </td>
-                `;
-                tbody.appendChild(tr);
+            if (!textarea) {
+                return;
             }
 
-            // re-enable auto management
-            dateManuallyEdited = false;
-            invoiceNoManuallyEdited = false;
+            textarea.style.height =
+                "auto";
 
-            setDateToToday({ force: true });
-            issueNewInvoiceNumber({ force: true });
+            textarea.style.height =
+                `${textarea.scrollHeight}px`;
+
+        }
+
+
+        function resizeAllTextareas() {
+
+            document
+                .querySelectorAll(
+                    "#invoice-wrapper textarea"
+                )
+                .forEach(
+                    autoResizeTextarea
+                );
+
+        }
+
+
+        document.addEventListener(
+            "input",
+            event => {
+
+                const target =
+                    event.target;
+
+                if (
+                    target.matches(
+                        "#invoice-wrapper textarea"
+                    )
+                ) {
+
+                    autoResizeTextarea(
+                        target
+                    );
+
+                }
+
+                if (
+                    target.matches(
+                        ".item-total, .percent-input"
+                    )
+                ) {
+
+                    updateTotal();
+
+                }
+
+                if (
+                    target.closest(
+                        "#invoice-wrapper"
+                    )
+                ) {
+
+                    scheduleSaveDraft();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "focusout",
+            event => {
+
+                const target =
+                    event.target;
+
+                if (
+                    target.matches(
+                        ".item-total"
+                    )
+                ) {
+
+                    formatAmountInput(
+                        target
+                    );
+
+                    updateTotal();
+
+                    scheduleSaveDraft();
+
+                }
+
+                if (
+                    target.matches(
+                        ".percent-input"
+                    )
+                ) {
+
+                    normalizePercentInput(
+                        target
+                    );
+
+                    updateTotal();
+
+                    scheduleSaveDraft();
+
+                }
+
+            }
+        );
+
+
+        // =====================================================
+        // PAYMENT SETTINGS
+        // =====================================================
+
+        const bankNameEl =
+            document
+                .getElementById(
+                    "bankName"
+                );
+
+        const accountNameEl =
+            document
+                .getElementById(
+                    "accountName"
+                );
+
+        const accountNumberEl =
+            document
+                .getElementById(
+                    "accountNumber"
+                );
+
+
+        function saveBusinessSettings() {
+
+            const settings = {
+
+                bankName:
+                    bankNameEl
+                        ?.value ||
+                    "",
+
+                accountName:
+                    accountNameEl
+                        ?.value ||
+                    "",
+
+                accountNumber:
+                    accountNumberEl
+                        ?.value ||
+                    ""
+
+            };
+
+            storageSet(
+                BUSINESS_SETTINGS_KEY,
+                JSON.stringify(
+                    settings
+                )
+            );
+        }
+
+
+        function loadBusinessSettings() {
+
+            const raw =
+                storageGet(
+                    BUSINESS_SETTINGS_KEY
+                );
+
+            if (!raw) {
+                return;
+            }
+
+            try {
+
+                const settings =
+                    JSON.parse(raw);
+
+                if (bankNameEl) {
+
+                    bankNameEl.value =
+                        settings.bankName ||
+                        "";
+
+                }
+
+                if (accountNameEl) {
+
+                    accountNameEl.value =
+                        settings.accountName ||
+                        "";
+
+                }
+
+                if (accountNumberEl) {
+
+                    accountNumberEl.value =
+                        settings.accountNumber ||
+                        "";
+
+                }
+
+            } catch (_) { }
+        }
+
+
+        [
+            bankNameEl,
+            accountNameEl,
+            accountNumberEl
+        ].forEach(
+            element => {
+
+                if (!element) {
+                    return;
+                }
+
+                element
+                    .addEventListener(
+                        "input",
+                        saveBusinessSettings
+                    );
+
+            }
+        );
+
+
+        // =====================================================
+        // EXTRA DETAILS VISIBILITY
+        // =====================================================
+
+        let extraDetailsVisible =
+            false;
+
+
+        function setExtraDetailsVisible(
+            visible,
+            {
+                save = true
+            } = {}
+        ) {
+
+            extraDetailsVisible =
+                Boolean(visible);
+
+            const section =
+                document
+                    .getElementById(
+                        "extra-details-section"
+                    );
+
+            const button =
+                document
+                    .getElementById(
+                        "extraDetailsBtn"
+                    );
+
+            if (section) {
+
+                section.classList
+                    .toggle(
+                        "hidden",
+                        !extraDetailsVisible
+                    );
+
+            }
+
+            if (button) {
+
+                button.classList
+                    .toggle(
+                        "brand-blue",
+                        extraDetailsVisible
+                    );
+
+                button.classList
+                    .toggle(
+                        "text-white",
+                        extraDetailsVisible
+                    );
+
+                button.classList
+                    .toggle(
+                        "bg-gray-50",
+                        !extraDetailsVisible
+                    );
+
+                button.classList
+                    .toggle(
+                        "text-gray-800",
+                        !extraDetailsVisible
+                    );
+
+            }
+
+            if (
+                extraDetailsVisible
+            ) {
+
+                setTimeout(
+                    resizeAllTextareas,
+                    0
+                );
+
+            }
+
+            if (save) {
+
+                scheduleSaveDraft();
+
+            }
+        }
+
+
+        function toggleExtraDetails() {
+
+            resetInactivityTimer();
+
+            setExtraDetailsVisible(
+                !extraDetailsVisible
+            );
+        }
+
+
+        // =====================================================
+        // AUTO-SAVE / RESTORE DRAFT
+        // =====================================================
+
+        let saveDraftTimer = null;
+
+        let isRestoringDraft =
+            false;
+
+
+        function collectRows() {
+
+            return Array
+                .from(
+                    document
+                        .querySelectorAll(
+                            "#invoice-rows tr"
+                        )
+                )
+                .map(
+                    row => ({
+
+                        serviceName:
+                            row
+                                .querySelector(
+                                    ".service-name"
+                                )
+                                ?.value ||
+                            "",
+
+                        description:
+                            row
+                                .querySelector(
+                                    ".service-description"
+                                )
+                                ?.value ||
+                            "",
+
+                        total:
+                            row
+                                .querySelector(
+                                    ".item-total"
+                                )
+                                ?.value ||
+                            "0"
+
+                    })
+                );
+        }
+
+
+        function saveDraft() {
+
+            if (
+                isRestoringDraft
+            ) {
+
+                return;
+
+            }
+
+            const draft = {
+
+                version: 2,
+
+                clientName:
+                    clientNameEl
+                        ?.value ||
+                    "",
+
+                clientPhone:
+                    clientPhoneEl
+                        ?.value ||
+                    "",
+
+                clientAddress:
+                    clientAddressEl
+                        ?.value ||
+                    "",
+
+                invoiceNo:
+                    invoiceNoEl
+                        ?.value ||
+                    "",
+
+                day:
+                    invDayEl
+                        ?.value ||
+                    "",
+
+                month:
+                    invMonthEl
+                        ?.value ||
+                    "",
+
+                year:
+                    invYearEl
+                        ?.value ||
+                    "",
+
+                rows:
+                    collectRows(),
+
+                discount:
+                    discountEl
+                        ?.value ||
+                    "0",
+
+                tax:
+                    taxEl
+                        ?.value ||
+                    "0",
+
+                currency:
+                    currentCurrency,
+
+                notes:
+                    notesEl
+                        ?.value ||
+                    "",
+
+                extraDetailsVisible,
+
+                dateManuallyEdited,
+
+                invoiceNoManuallyEdited,
+
+                invoiceNumberCommitted
+
+            };
+
+            storageSet(
+                DRAFT_KEY,
+                JSON.stringify(
+                    draft
+                )
+            );
+        }
+
+
+        function scheduleSaveDraft() {
+
+            if (
+                isRestoringDraft
+            ) {
+
+                return;
+
+            }
+
+            clearTimeout(
+                saveDraftTimer
+            );
+
+            saveDraftTimer =
+                setTimeout(
+                    saveDraft,
+                    250
+                );
+        }
+
+
+        function restoreDraft() {
+
+            const raw =
+                storageGet(
+                    DRAFT_KEY
+                );
+
+            if (!raw) {
+                return false;
+            }
+
+            try {
+
+                const draft =
+                    JSON.parse(raw);
+
+                if (
+                    !draft ||
+                    typeof draft !==
+                    "object"
+                ) {
+
+                    return false;
+
+                }
+
+                isRestoringDraft =
+                    true;
+
+                if (clientNameEl) {
+
+                    clientNameEl.value =
+                        draft.clientName ||
+                        "";
+
+                }
+
+                if (clientPhoneEl) {
+
+                    clientPhoneEl.value =
+                        draft.clientPhone ||
+                        "";
+
+                }
+
+                if (clientAddressEl) {
+
+                    clientAddressEl.value =
+                        draft.clientAddress ||
+                        "";
+
+                }
+
+                if (invoiceNoEl) {
+
+                    invoiceNoEl.value =
+                        draft.invoiceNo ||
+                        "";
+
+                }
+
+                if (invDayEl) {
+
+                    invDayEl.value =
+                        draft.day ||
+                        "";
+
+                }
+
+                if (invMonthEl) {
+
+                    invMonthEl.value =
+                        (
+                            draft.month ||
+                            ""
+                        )
+                            .toUpperCase();
+
+                }
+
+                if (invYearEl) {
+
+                    invYearEl.value =
+                        draft.year ||
+                        "";
+
+                }
+
+                if (discountEl) {
+
+                    discountEl.value =
+                        draft.discount ??
+                        "0";
+
+                }
+
+                if (taxEl) {
+
+                    taxEl.value =
+                        draft.tax ??
+                        "0";
+
+                }
+
+                if (notesEl) {
+
+                    notesEl.value =
+                        draft.notes ||
+                        "";
+
+                }
+
+                if (
+                    CURRENCIES[
+                    draft.currency
+                    ]
+                ) {
+
+                    currentCurrency =
+                        draft.currency;
+
+                    storageSet(
+                        CURRENCY_KEY,
+                        currentCurrency
+                    );
+
+                }
+
+                dateManuallyEdited =
+                    Boolean(
+                        draft.dateManuallyEdited
+                    );
+
+                invoiceNoManuallyEdited =
+                    Boolean(
+                        draft.invoiceNoManuallyEdited
+                    );
+
+                invoiceNumberCommitted =
+                    Boolean(
+                        draft.invoiceNumberCommitted
+                    );
+
+                const tbody =
+                    document
+                        .getElementById(
+                            "invoice-rows"
+                        );
+
+                tbody.innerHTML =
+                    "";
+
+                const rows =
+
+                    Array.isArray(
+                        draft.rows
+                    ) &&
+
+                        draft.rows.length >
+                        0
+
+                        ? draft.rows
+                        : [{}];
+
+                rows.forEach(
+                    (
+                        row,
+                        index
+                    ) => {
+
+                        tbody.appendChild(
+                            createInvoiceRow(
+                                index + 1,
+                                row
+                            )
+                        );
+
+                    }
+                );
+
+                setExtraDetailsVisible(
+                    Boolean(
+                        draft.extraDetailsVisible
+                    ),
+                    {
+                        save: false
+                    }
+                );
+
+                draftRestored =
+                    true;
+
+                return true;
+
+            } catch (_) {
+
+                storageRemove(
+                    DRAFT_KEY
+                );
+
+                return false;
+
+            } finally {
+
+                isRestoringDraft =
+                    false;
+
+            }
+        }
+
+
+        // =====================================================
+        // NEW INVOICE
+        // =====================================================
+
+        function openNewInvoiceModal() {
+
+            resetInactivityTimer();
+
+            const modal =
+                document
+                    .getElementById(
+                        "new-invoice-modal"
+                    );
+
+            modal.classList
+                .remove(
+                    "hidden"
+                );
+
+            modal.classList
+                .add(
+                    "flex"
+                );
+        }
+
+
+        function closeNewInvoiceModal() {
+
+            const modal =
+                document
+                    .getElementById(
+                        "new-invoice-modal"
+                    );
+
+            modal.classList
+                .add(
+                    "hidden"
+                );
+
+            modal.classList
+                .remove(
+                    "flex"
+                );
+        }
+
+
+        function startNewInvoice() {
+
+            resetInactivityTimer();
+
+            closeNewInvoiceModal();
+
+            if (clientNameEl) {
+
+                clientNameEl.value =
+                    "";
+
+            }
+
+            if (clientPhoneEl) {
+
+                clientPhoneEl.value =
+                    "";
+
+            }
+
+            if (clientAddressEl) {
+
+                clientAddressEl.value =
+                    "";
+
+            }
+
+            if (discountEl) {
+
+                discountEl.value =
+                    "0";
+
+            }
+
+            if (taxEl) {
+
+                taxEl.value =
+                    "0";
+
+            }
+
+            if (notesEl) {
+
+                notesEl.value =
+                    "";
+
+            }
+
+            const tbody =
+                document
+                    .getElementById(
+                        "invoice-rows"
+                    );
+
+            tbody.innerHTML =
+                "";
+
+            tbody.appendChild(
+                createInvoiceRow(1)
+            );
+
+            dateManuallyEdited =
+                false;
+
+            invoiceNoManuallyEdited =
+                false;
+
+            invoiceNumberCommitted =
+                false;
+
+            draftRestored =
+                false;
+
+            setDateToToday({
+                force: true
+            });
+
+            setInvoiceNumberPreview({
+                force: true
+            });
+
+            resizeAllTextareas();
 
             updateTotal();
-            window.scrollTo({ top: 0, behavior: "smooth" });
+
+            saveDraft();
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         }
 
-        // small export reliability improvements WITHOUT changing design/output:
-        async function waitForImages(rootEl) {
-            const imgs = Array.from(rootEl.querySelectorAll("img"));
-            await Promise.all(imgs.map(img => {
-                if (img.complete && img.naturalWidth > 0) return Promise.resolve();
-                return new Promise(resolve => {
-                    const done = () => resolve();
-                    img.addEventListener("load", done, { once: true });
-                    img.addEventListener("error", done, { once: true });
-                });
-            }));
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeNewInvoiceModal();
+
+                }
+
+            }
+        );
+
+
+        // =====================================================
+        // EXPORT HELPERS
+        // =====================================================
+
+        async function waitForImages(
+            rootEl
+        ) {
+
+            const imgs =
+                Array.from(
+                    rootEl
+                        .querySelectorAll(
+                            "img"
+                        )
+                );
+
+            await Promise.all(
+                imgs.map(
+                    img => {
+
+                        if (
+                            img.complete &&
+                            img.naturalWidth >
+                            0
+                        ) {
+
+                            return Promise.resolve();
+
+                        }
+
+                        return new Promise(
+                            resolve => {
+
+                                const done =
+                                    () =>
+                                        resolve();
+
+                                img.addEventListener(
+                                    "load",
+                                    done,
+                                    {
+                                        once: true
+                                    }
+                                );
+
+                                img.addEventListener(
+                                    "error",
+                                    done,
+                                    {
+                                        once: true
+                                    }
+                                );
+
+                            }
+                        );
+
+                    }
+                )
+            );
         }
 
-        async function exportInvoice(format) {
+
+        function safeFilenamePart(
+            value
+        ) {
+
+            return String(
+                value || ""
+            )
+                .trim()
+                .replace(
+                    /[\\/:*?"<>|]/g,
+                    "-"
+                )
+                .replace(
+                    /\s+/g,
+                    "_"
+                )
+                .replace(
+                    /_+/g,
+                    "_"
+                )
+                .replace(
+                    /^[-_.]+|[-_.]+$/g,
+                    ""
+                );
+        }
+
+
+        function buildExportBaseName() {
+
+            const invoicePart =
+                safeFilenamePart(
+                    invoiceNoEl
+                        ?.value
+                );
+
+            const clientPart =
+                safeFilenamePart(
+                    clientNameEl
+                        ?.value
+                );
+
+            return [
+                "Sapphire_Quest_Invoice",
+                invoicePart,
+                clientPart,
+                currentCurrency
+            ]
+                .filter(Boolean)
+                .join("_");
+        }
+
+
+        function setExportBusy(
+            isBusy,
+            format = "pdf"
+        ) {
+
+            const pdfBtn =
+                document
+                    .getElementById(
+                        "pdfBtn"
+                    );
+
+            const pngBtn =
+                document
+                    .getElementById(
+                        "pngBtn"
+                    );
+
+            const status =
+                document
+                    .getElementById(
+                        "export-status"
+                    );
+
+            const statusTitle =
+                document
+                    .getElementById(
+                        "export-status-title"
+                    );
+
+            [
+                pdfBtn,
+                pngBtn
+            ].forEach(
+                button => {
+
+                    if (!button) {
+                        return;
+                    }
+
+                    button.disabled =
+                        isBusy;
+
+                    button.classList
+                        .toggle(
+                            "opacity-60",
+                            isBusy
+                        );
+
+                    button.classList
+                        .toggle(
+                            "cursor-not-allowed",
+                            isBusy
+                        );
+
+                }
+            );
+
+            if (statusTitle) {
+
+                statusTitle
+                    .textContent =
+
+                    format === "pdf"
+
+                        ? "Generating PDF..."
+
+                        : "Generating PNG...";
+
+            }
+
+            if (status) {
+
+                status.classList
+                    .toggle(
+                        "hidden",
+                        !isBusy
+                    );
+
+                status.classList
+                    .toggle(
+                        "flex",
+                        isBusy
+                    );
+
+            }
+        }
+
+
+        function replaceFieldsForExport(
+            element
+        ) {
+
+            const controls =
+                element
+                    .querySelectorAll(
+                        "input, textarea"
+                    );
+
+            const replacements =
+                [];
+
+            controls.forEach(
+                control => {
+
+                    const span =
+                        document
+                            .createElement(
+                                "span"
+                            );
+
+                    let displayValue =
+                        control.value ||
+                        "";
+
+                    if (
+                        control.classList
+                            .contains(
+                                "percent-input"
+                            )
+                    ) {
+
+                        displayValue =
+                            `${clampPercent(displayValue)}%`;
+
+                    } else if (
+                        control.classList
+                            .contains(
+                                "item-total"
+                            )
+                    ) {
+
+                        displayValue =
+                            formatNumber(
+                                parseMoneyInput(
+                                    displayValue
+                                )
+                            );
+
+                    }
+
+                    span.innerText =
+                        displayValue;
+
+                    span.className =
+                        `${control.className} export-value block`;
+
+                    span.style.minHeight =
+                        "1.2em";
+
+                    replacements.push({
+
+                        control,
+
+                        span,
+
+                        originalDisplay:
+                            control
+                                .style
+                                .display
+
+                    });
+
+                    control.style.display =
+                        "none";
+
+                    control.parentNode
+                        .insertBefore(
+                            span,
+                            control
+                        );
+
+                }
+            );
+
+            return replacements;
+        }
+
+
+        function restoreExportFields(
+            replacements
+        ) {
+
+            replacements.forEach(
+                item => {
+
+                    item.span.remove();
+
+                    item.control
+                        .style
+                        .display =
+                        item.originalDisplay;
+
+                }
+            );
+        }
+
+
+        function addCanvasToPdf(
+            pdf,
+            canvas
+        ) {
+
+            const pdfWidth =
+                pdf
+                    .internal
+                    .pageSize
+                    .getWidth();
+
+            const pageHeightMm =
+                pdf
+                    .internal
+                    .pageSize
+                    .getHeight();
+
+            const fullHeightMm =
+                (
+                    canvas.height *
+                    pdfWidth
+                ) /
+                canvas.width;
+
+            if (
+                fullHeightMm <=
+                pageHeightMm
+            ) {
+
+                pdf.addImage(
+                    canvas.toDataURL(
+                        "image/png"
+                    ),
+                    "PNG",
+                    0,
+                    0,
+                    pdfWidth,
+                    fullHeightMm
+                );
+
+                return;
+            }
+
+            const pageHeightPx =
+                Math.floor(
+                    (
+                        pageHeightMm *
+                        canvas.width
+                    ) /
+                    pdfWidth
+                );
+
+            let sourceY = 0;
+
+            let pageIndex = 0;
+
+            while (
+                sourceY <
+                canvas.height
+            ) {
+
+                const sliceHeight =
+                    Math.min(
+                        pageHeightPx,
+                        canvas.height -
+                        sourceY
+                    );
+
+                const pageCanvas =
+                    document
+                        .createElement(
+                            "canvas"
+                        );
+
+                pageCanvas.width =
+                    canvas.width;
+
+                pageCanvas.height =
+                    sliceHeight;
+
+                const ctx =
+                    pageCanvas
+                        .getContext(
+                            "2d"
+                        );
+
+                ctx.drawImage(
+                    canvas,
+                    0,
+                    sourceY,
+                    canvas.width,
+                    sliceHeight,
+                    0,
+                    0,
+                    canvas.width,
+                    sliceHeight
+                );
+
+                const sliceHeightMm =
+                    (
+                        sliceHeight *
+                        pdfWidth
+                    ) /
+                    canvas.width;
+
+                if (
+                    pageIndex > 0
+                ) {
+
+                    pdf.addPage();
+
+                }
+
+                pdf.addImage(
+                    pageCanvas
+                        .toDataURL(
+                            "image/png"
+                        ),
+                    "PNG",
+                    0,
+                    0,
+                    pdfWidth,
+                    sliceHeightMm
+                );
+
+                sourceY +=
+                    sliceHeight;
+
+                pageIndex += 1;
+            }
+        }
+
+
+        async function exportInvoice(
+            format
+        ) {
+
             resetInactivityTimer();
 
-            const element = document.getElementById('invoice-wrapper');
-            const inputs = element.querySelectorAll('input, textarea');
-            const replacements = [];
-
-            // ensure fonts/images are ready for accurate capture
-            if (document.fonts && document.fonts.ready) {
-                try { await document.fonts.ready; } catch (_) { }
+            if (!isUnlocked) {
+                return;
             }
-            await waitForImages(element);
 
-            inputs.forEach(input => {
-                const span = document.createElement('span');
-                let displayValue = input.value;
-                if (input.type === 'number') displayValue += '%';
-                span.innerText = displayValue;
-                span.className = input.className + " block";
-                span.style.minHeight = "1.2em";
-                replacements.push({ el: input, span: span });
-                input.style.display = 'none';
-                input.parentNode.insertBefore(span, input);
-            });
+            if (
+                !window.html2canvas ||
+                !window.jspdf
+            ) {
 
-            const canvas = await html2canvas(element, {
-                scale: 3,
-                useCORS: true,
-                backgroundColor: "#ffffff",
-                windowWidth: 850,
-                scrollX: -window.scrollX,
-                scrollY: -window.scrollY
-            });
+                alert(
+                    "Export libraries did not load. Please check the internet connection and reload the page."
+                );
 
-            replacements.forEach(item => {
-                item.span.remove();
-                item.el.style.display = 'block';
-            });
+                return;
+            }
 
-            if (format === 'pdf') {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const imgData = canvas.toDataURL('image/png');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-                pdf.save('Sapphire_Quest_Invoice.pdf');
-            } else {
-                const link = document.createElement('a');
-                link.download = 'Invoice.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
+            if (
+                !getStrictDisplayedDate()
+            ) {
+
+                alert(
+                    "Please enter a valid invoice date before exporting."
+                );
+
+                return;
+            }
+
+            if (
+                !(
+                    invoiceNoEl
+                        ?.value ||
+                    ""
+                ).trim()
+            ) {
+
+                invoiceNoManuallyEdited =
+                    false;
+
+                invoiceNumberCommitted =
+                    false;
+
+                setInvoiceNumberPreview({
+                    force: true
+                });
+            }
+
+            normalizePercentInput(
+                discountEl
+            );
+
+            normalizePercentInput(
+                taxEl
+            );
+
+            updateTotal();
+
+            setExportBusy(
+                true,
+                format
+            );
+
+            clearInactivityTimer();
+
+            const element =
+                document
+                    .getElementById(
+                        "invoice-wrapper"
+                    );
+
+            let replacements =
+                [];
+
+            const previousInlineWidth =
+                element
+                    .style
+                    .width;
+
+            const previousInlineMaxWidth =
+                element
+                    .style
+                    .maxWidth;
+
+            try {
+
+                commitInvoiceNumberIfNeeded();
+
+                saveDraft();
+
+                resizeAllTextareas();
+
+                if (
+                    document.fonts &&
+                    document.fonts.ready
+                ) {
+
+                    try {
+
+                        await document
+                            .fonts
+                            .ready;
+
+                    } catch (_) { }
+
+                }
+
+                await waitForImages(
+                    element
+                );
+
+                document.body
+                    .classList
+                    .add(
+                        "exporting"
+                    );
+
+                element.style.width =
+                    "850px";
+
+                element.style.maxWidth =
+                    "850px";
+
+                replacements =
+                    replaceFieldsForExport(
+                        element
+                    );
+
+                const canvas =
+                    await html2canvas(
+                        element,
+                        {
+                            scale: 3,
+                            useCORS: true,
+                            backgroundColor: "#ffffff",
+                            windowWidth: 900,
+                            scrollX: -window.scrollX,
+                            scrollY: -window.scrollY,
+                            logging: false
+                        }
+                    );
+
+                const baseName =
+                    buildExportBaseName();
+
+                if (
+                    format === "pdf"
+                ) {
+
+                    const {
+                        jsPDF
+                    } =
+                        window.jspdf;
+
+                    const pdf =
+                        new jsPDF(
+                            "p",
+                            "mm",
+                            "a4"
+                        );
+
+                    addCanvasToPdf(
+                        pdf,
+                        canvas
+                    );
+
+                    pdf.save(
+                        `${baseName}.pdf`
+                    );
+
+                } else {
+
+                    const link =
+                        document
+                            .createElement(
+                                "a"
+                            );
+
+                    link.download =
+                        `${baseName}.png`;
+
+                    link.href =
+                        canvas.toDataURL(
+                            "image/png"
+                        );
+
+                    document.body
+                        .appendChild(
+                            link
+                        );
+
+                    link.click();
+
+                    link.remove();
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Invoice export failed:",
+                    error
+                );
+
+                alert(
+                    "The invoice could not be generated. Please reload the page and try again."
+                );
+
+            } finally {
+
+                restoreExportFields(
+                    replacements
+                );
+
+                element.style.width =
+                    previousInlineWidth;
+
+                element.style.maxWidth =
+                    previousInlineMaxWidth;
+
+                document.body
+                    .classList
+                    .remove(
+                        "exporting"
+                    );
+
+                setExportBusy(
+                    false,
+                    format
+                );
+
+                resizeAllTextareas();
+
+                resetInactivityTimer();
             }
         }
 
-        // Focus PIN on load
-        window.addEventListener("load", () => {
-            setTimeout(() => passInput.focus(), 100);
-        });
+
+        // =====================================================
+        // INITIALIZATION
+        // =====================================================
+
+        window.addEventListener(
+            "load",
+            () => {
+
+                loadBusinessSettings();
+
+                restoreDraft();
+
+                initializeCurrency();
+
+                resizeAllTextareas();
+
+                updateTotal();
+
+                setTimeout(
+                    () =>
+                        passInput.focus(),
+                    100
+                );
+
+            }
+        );
+
     </script>
+
 </body>
 
 </html>
