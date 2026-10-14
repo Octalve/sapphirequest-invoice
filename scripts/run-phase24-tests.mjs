@@ -1,0 +1,53 @@
+import { rmSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { resolve } from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const root = process.cwd();
+const outDir = resolve(root, ".phase24-test");
+const tscPath = require.resolve("typescript/bin/tsc");
+
+rmSync(outDir, { recursive: true, force: true });
+
+const compile = spawnSync(
+  process.execPath,
+  [
+    tscPath,
+    "--strict",
+    "--target", "ES2022",
+    "--module", "commonjs",
+    "--moduleResolution", "node",
+    "--skipLibCheck",
+    "--outDir", outDir,
+    "src/features/invoice/presentation/document-profile.ts",
+    "src/features/invoice/presentation/invoice-presentation.ts",
+  ],
+  { cwd: root, stdio: "inherit", shell: false },
+);
+
+if (compile.error) {
+  console.error("Phase 2.4 presentation compilation failed:", compile.error);
+  rmSync(outDir, { recursive: true, force: true });
+  process.exit(1);
+}
+
+if (compile.status !== 0) {
+  rmSync(outDir, { recursive: true, force: true });
+  process.exit(compile.status ?? 1);
+}
+
+const tests = spawnSync(
+  process.execPath,
+  ["--test", resolve(root, "tests", "phase24-presentation.test.mjs")],
+  { cwd: root, stdio: "inherit", shell: false },
+);
+
+rmSync(outDir, { recursive: true, force: true });
+
+if (tests.error) {
+  console.error("Phase 2.4 presentation tests failed:", tests.error);
+  process.exit(1);
+}
+
+process.exit(tests.status ?? 1);

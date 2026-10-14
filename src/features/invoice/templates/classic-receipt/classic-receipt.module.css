@@ -1,0 +1,799 @@
+.page {
+  --receipt-accent: var(--template-accent, #0755db);
+  --receipt-accent-dark: var(--template-accent-dark, #043996);
+  --receipt-ink: #172033;
+  --receipt-muted: #667085;
+  --receipt-line: #253047;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 794px;
+  height: 559px;
+  min-height: 559px;
+  margin-inline: auto;
+  padding: 18px 26px 14px;
+  overflow: hidden;
+  background: #fff;
+  color: var(--receipt-ink);
+  font-family: Inter, Arial, sans-serif;
+  box-shadow: 0 24px 60px rgb(15 23 42 / 0.16);
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  pointer-events: none;
+  border: 1.4px solid var(--receipt-accent-dark);
+}
+
+.page input,
+.page textarea {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.page textarea {
+  resize: none;
+  overflow: hidden;
+}
+
+/* 1. Brand header -------------------------------------------------------- */
+
+@font-face {
+  font-family: "Neue Plak Extended";
+  src:
+    local("Neue Plak Extended Bold"),
+    local("NeuePlakExtended-Bold"),
+    url("/fonts/neue-plak-extended-bold.woff") format("woff"),
+    url("/fonts/neue-plak-extended-bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+.brandSection {
+  position: relative;
+  z-index: 1;
+}
+
+.brandImagePanel {
+  position: relative;
+  width: calc(100% - 4px);
+  height: 101px;
+  min-height: 101px;
+  margin: 0 2px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.brandHeaderImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.brandPanel {
+  display: grid;
+  grid-template-columns: minmax(0, 20%) minmax(0, 80%);
+  min-height: 101px;
+  margin: 0 2px;
+  padding: 8px 14px 6px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--receipt-accent) 6%, #f7f7f9);
+  text-align: left;
+}
+
+.logoRail {
+  display: flex;
+  min-width: 0;
+  min-height: 87px;
+  align-items: center;
+  justify-content: center;
+  padding-right: 12px;
+}
+
+.logo {
+  display: block;
+  width: min(88%, 100px);
+  height: 78px;
+  max-width: 100%;
+  flex: 0 1 auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+.identityRail {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 16px;
+}
+
+.businessNameInput {
+  width: 100% !important;
+  max-height: 37px;
+  color: var(--receipt-ink) !important;
+  font-family:
+    "Neue Plak Extended",
+    "Arial Black",
+    "Arial Narrow",
+    Arial,
+    sans-serif !important;
+  font-size: 25px !important;
+  font-weight: 700 !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.035em !important;
+  text-align: left;
+}
+
+.businessNameCompact {
+  font-size: 21px !important;
+  letter-spacing: -0.03em !important;
+}
+
+.businessNameTight {
+  font-size: 18px !important;
+  letter-spacing: -0.025em !important;
+}
+
+.contactGrid {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.88fr)
+    minmax(0, 1.28fr)
+    minmax(0, 1fr);
+  gap: 6px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.detailField {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr);
+  gap: 5px;
+  min-width: 0;
+  align-items: center;
+}
+
+.detailIcon {
+  display: inline-flex;
+  width: 17px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.phoneIcon {
+  background: #16a34a;
+}
+
+.emailIcon {
+  background: #2563eb;
+}
+
+.websiteIcon {
+  background: #0891b2;
+}
+
+.addressIcon {
+  background: #dc2626;
+}
+
+.detailField input,
+.businessAddressInput {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--receipt-ink) !important;
+  font-family: Inter, Arial, sans-serif !important;
+  font-size: 7.8px !important;
+  font-weight: 700 !important;
+  line-height: 1.15 !important;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detailField input:focus,
+.businessAddressInput:focus,
+.businessNameInput:focus {
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.72);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--receipt-accent) 24%, transparent);
+}
+
+.addressField {
+  margin-top: 4px;
+}
+
+.businessAddressInput {
+  width: 100% !important;
+  max-height: 18px;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.brandDivider {
+  height: 1.5px;
+  margin: 6px 8px 0;
+  background: var(--receipt-accent-dark);
+}
+
+/* 2. Receipt title and meta --------------------------------------------- */
+
+.title {
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+  margin: 5px auto 5px;
+  padding: 4px 21px 3px;
+  background: var(--receipt-accent-dark);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+}
+
+.metaRow {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 115px;
+  align-items: center;
+  margin: 0 16px 4px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.dateBlock,
+.numberBlock {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  font-size: 9.5px;
+}
+
+.dateFields {
+  display: flex;
+  min-height: 22px;
+  align-items: center;
+  gap: 3px;
+  padding: 0 7px 2px;
+  border-bottom: 1px solid var(--receipt-line);
+}
+
+.dateFields input:nth-of-type(1) {
+  width: 24px;
+  text-align: center;
+}
+
+.dateFields input:nth-of-type(2) {
+  width: 32px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.dateFields input:nth-of-type(3) {
+  width: 42px;
+  text-align: center;
+}
+
+.receiptNumber {
+  display: flex;
+  min-height: 27px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border: 1px solid var(--receipt-line);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 8.4px;
+  font-weight: 850;
+}
+
+.receiptNumber input {
+  width: 42px;
+  text-align: center;
+  font-weight: 900;
+}
+
+/* 3. Receipt details ---------------------------------------------------- */
+
+.detailsSection {
+  position: relative;
+  z-index: 1;
+  margin: 0 16px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-top: 5px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.fieldRow > span,
+.sumFirstLine > span {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.fieldRow textarea {
+  height: 33px !important;
+  max-height: 33px;
+  padding: 8px 9px 5px;
+  overflow: hidden;
+  border: 1px solid var(--receipt-line);
+  font-size: 10.4px;
+  line-height: 1.15;
+}
+
+.sumSection {
+  margin-top: 5px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.sumFirstLine {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+
+.sumFirstLine strong,
+.sumSecondLine {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 5px 9px;
+  overflow: hidden;
+  border: 1px solid var(--receipt-line);
+  font-size: 9.6px;
+  font-weight: 500;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.sumSecondLine {
+  min-height: 32px;
+  margin-top: 4px;
+}
+
+/* 4. Amount + payment method ------------------------------------------- */
+
+.paymentSection {
+  position: relative;
+  z-index: 1;
+  margin: 0 16px;
+}
+
+.amountRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.8fr);
+  gap: 31px;
+  margin-top: 6px;
+}
+
+.amountField {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 9px;
+  align-items: center;
+  font-size: 9.6px;
+  font-weight: 850;
+}
+
+.moneyInput {
+  display: flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 0 9px;
+  overflow: hidden;
+  border: 1px solid var(--receipt-line);
+}
+
+.moneyInput b {
+  flex: 0 0 auto;
+  margin-right: 4px;
+}
+
+.moneyInput input {
+  min-width: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.paymentMethods {
+  display: flex;
+  align-items: center;
+  gap: 9px 23px;
+  margin-top: 7px;
+  font-size: 9.6px;
+}
+
+.paymentMethods > strong {
+  margin-right: 2px;
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.box,
+.boxChecked {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: 1px solid var(--receipt-line);
+}
+
+.boxChecked {
+  border-color: var(--receipt-accent);
+  background: var(--receipt-accent);
+}
+
+/* 5. Signatures + reference -------------------------------------------- */
+
+.signatureFooter {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+}
+
+.signatureArea {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 135px;
+  margin: 0 28px;
+  text-align: center;
+}
+
+.signatureArea > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.signatureCell {
+  position: relative;
+  min-width: 0;
+}
+
+.signatureImageSlot {
+  display: flex;
+  width: 100%;
+  height: 29px;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.signatureImage {
+  display: block;
+  width: auto;
+  max-width: 74%;
+  height: auto;
+  max-height: 27px;
+  object-fit: contain;
+  object-position: center bottom;
+  user-select: none;
+}
+
+.signatureControls {
+  position: absolute;
+  top: -18px;
+  right: 0;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.signatureUploadButton,
+.signatureRemoveButton {
+  display: inline-flex;
+  min-height: 17px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--receipt-accent-dark) 38%, #cbd5e1);
+  border-radius: 999px;
+  background: #fff;
+  padding: 2px 7px;
+  color: var(--receipt-accent-dark);
+  font-size: 6.6px;
+  font-weight: 850;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 0.08);
+}
+
+.signatureRemoveButton {
+  color: #7f1d1d;
+}
+
+.signatureFileInput {
+  position: absolute;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0 !important;
+}
+
+:global(body.sq-exporting) .signatureControls {
+  display: none !important;
+}
+
+.signatureLine {
+  width: 100%;
+  margin-bottom: 5px;
+  border-top: 1px solid var(--receipt-line);
+}
+
+.signatureArea strong {
+  max-width: 100%;
+  font-size: 7.8px;
+  line-height: 1.15;
+}
+
+.customerSignature {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 10px;
+}
+
+.referenceRow {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 34px;
+  align-items: end;
+  margin: 13px 16px 0;
+}
+
+.referenceRow label {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 7px;
+  align-items: end;
+  font-size: 7.8px;
+}
+
+.referenceRow input {
+  min-height: 17px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--receipt-line);
+  font-size: 7.8px;
+}
+
+.referenceRow p {
+  margin: 0;
+  color: var(--receipt-muted);
+  font-size: 7.2px;
+  text-align: right;
+}
+
+/* Fit classes ----------------------------------------------------------- */
+
+.textCompact {
+  font-size: 8.7px !important;
+}
+
+.textTight {
+  font-size: 7.7px !important;
+}
+
+.textMicro {
+  font-size: 6.8px !important;
+  letter-spacing: -0.01em;
+}
+
+.moneyCompact {
+  font-size: 9.3px !important;
+}
+
+.moneyTight {
+  font-size: 8.2px !important;
+}
+
+.moneyMicro {
+  font-size: 7.2px !important;
+}
+
+/* True physical landscape profiles ------------------------------------ */
+
+.page[data-paper-size="A5"] {
+  width:794px;
+  width: 794px;
+  height: 559px;
+  min-height: 559px;
+}
+
+.page[data-paper-size="A4"] {
+  width: 1123px;
+  height: 794px;
+  min-height: 794px;
+  padding: 28px 42px 22px;
+}
+
+.page[data-paper-size="LETTER"] {
+  width:1056px;
+  width: 1056px;
+  height: 816px;
+  min-height: 816px;
+  padding: 28px 40px 22px;
+}
+
+.page[data-paper-size="A4"] .brandImagePanel,
+.page[data-paper-size="LETTER"] .brandImagePanel {
+  height: 128px;
+  min-height: 128px;
+}
+
+.page[data-paper-size="A4"] .brandPanel,
+.page[data-paper-size="LETTER"] .brandPanel {
+  min-height: 128px;
+  padding-top: 13px;
+}
+
+.page[data-paper-size="A4"] .logoRail,
+.page[data-paper-size="LETTER"] .logoRail {
+  min-height: 108px;
+}
+
+.page[data-paper-size="A4"] .logo,
+.page[data-paper-size="LETTER"] .logo {
+  width: min(88%, 124px);
+  height: 98px;
+}
+
+.page[data-paper-size="A4"] .identityRail,
+.page[data-paper-size="LETTER"] .identityRail {
+  padding-left: 22px;
+}
+
+.page[data-paper-size="A4"] .businessNameInput,
+.page[data-paper-size="LETTER"] .businessNameInput {
+  max-height: 46px;
+  font-size: 31px !important;
+}
+
+.page[data-paper-size="A4"] .businessNameCompact,
+.page[data-paper-size="LETTER"] .businessNameCompact {
+  font-size: 26px !important;
+}
+
+.page[data-paper-size="A4"] .businessNameTight,
+.page[data-paper-size="LETTER"] .businessNameTight {
+  font-size: 22px !important;
+}
+
+.page[data-paper-size="A4"] .detailField,
+.page[data-paper-size="LETTER"] .detailField {
+  grid-template-columns: 21px minmax(0, 1fr);
+  gap: 7px;
+}
+
+.page[data-paper-size="A4"] .detailIcon,
+.page[data-paper-size="LETTER"] .detailIcon {
+  width: 21px;
+  height: 21px;
+}
+
+.page[data-paper-size="A4"] .detailField input,
+.page[data-paper-size="A4"] .businessAddressInput,
+.page[data-paper-size="LETTER"] .detailField input,
+.page[data-paper-size="LETTER"] .businessAddressInput {
+  font-size: 9.7px !important;
+}
+
+.page[data-paper-size="A4"] .title,
+.page[data-paper-size="LETTER"] .title {
+  margin-block: 7px;
+  padding: 5px 28px;
+  font-size: 13px;
+}
+
+.page[data-paper-size="A4"] .metaRow,
+.page[data-paper-size="LETTER"] .metaRow {
+  gap: 150px;
+  margin-inline: 24px;
+}
+
+.page[data-paper-size="A4"] .detailsSection,
+.page[data-paper-size="A4"] .paymentSection,
+.page[data-paper-size="LETTER"] .detailsSection,
+.page[data-paper-size="LETTER"] .paymentSection {
+  margin-inline: 24px;
+}
+
+.page[data-paper-size="A4"] .fieldRow,
+.page[data-paper-size="LETTER"] .fieldRow {
+  grid-template-columns: 145px minmax(0, 1fr);
+}
+
+.page[data-paper-size="A4"] .sumFirstLine,
+.page[data-paper-size="LETTER"] .sumFirstLine {
+  grid-template-columns: 130px minmax(0, 1fr);
+}
+
+.page[data-paper-size="A4"] .fieldRow > span,
+.page[data-paper-size="A4"] .sumFirstLine > span,
+.page[data-paper-size="LETTER"] .fieldRow > span,
+.page[data-paper-size="LETTER"] .sumFirstLine > span {
+  font-size: 15px;
+}
+
+.page[data-paper-size="A4"] .fieldRow textarea,
+.page[data-paper-size="LETTER"] .fieldRow textarea {
+  height: 42px !important;
+  max-height: 42px;
+  font-size: 12px;
+}
+
+.page[data-paper-size="A4"] .sumFirstLine strong,
+.page[data-paper-size="A4"] .sumSecondLine,
+.page[data-paper-size="LETTER"] .sumFirstLine strong,
+.page[data-paper-size="LETTER"] .sumSecondLine {
+  min-height: 42px;
+  font-size: 11px;
+}
+
+.page[data-paper-size="A4"] .amountField,
+.page[data-paper-size="A4"] .paymentMethods,
+.page[data-paper-size="LETTER"] .amountField,
+.page[data-paper-size="LETTER"] .paymentMethods {
+  font-size: 11.5px;
+}
+
+.page[data-paper-size="A4"] .moneyInput,
+.page[data-paper-size="LETTER"] .moneyInput {
+  min-height: 40px;
+}
+
+.page[data-paper-size="A4"] .signatureArea,
+.page[data-paper-size="LETTER"] .signatureArea {
+  gap: 180px;
+  margin-inline: 44px;
+}
+
+.page[data-paper-size="A4"] .signatureArea strong,
+.page[data-paper-size="LETTER"] .signatureArea strong {
+  font-size: 9.5px;
+}
+
+.page[data-paper-size="A4"] .customerSignature,
+.page[data-paper-size="LETTER"] .customerSignature {
+  font-size: 12px;
+}
+
+.page[data-paper-size="A4"] .referenceRow,
+.page[data-paper-size="LETTER"] .referenceRow {
+  margin-top: 18px;
+  font-size: 9px;
+}

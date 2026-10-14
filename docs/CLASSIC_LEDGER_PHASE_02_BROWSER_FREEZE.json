@@ -1,0 +1,11 @@
+{
+  "source": "Classic Ledger Phase 2 approved browser checkpoint",
+  "files": {
+    "src/features/invoice/templates/classic-ledger/classic-ledger-renderer.tsx": "D6EB61AEF42C0FA29DD43F2A279332D10C26A100B15F082472230323CF408CAD",
+    "src/features/invoice/templates/classic-ledger/classic-ledger.module.css": "CC8A5064B53E887262DF437C2F00B2ACE54BF217F2E4697A9A33C5284C2E892F",
+    "src/features/invoice/templates/classic-ledger/components/classic-auto-textarea.tsx": "49359B17C321672634EE234B49652262FC6AEBF37406CC12B01DF7C02403BF61",
+    "src/features/invoice/templates/classic-ledger/components/classic-ledger-header.tsx": "22FB68103145554F41FE65487F173DCC134945E6EA737B30175CF642A49C9BFB",
+    "src/features/invoice/templates/classic-ledger/components/classic-ledger-items.tsx": "9B361EED4B8BD7BC9443CDF61999C128BEE77B9421B2E2F440DFFE04E953CF6E",
+    "src/features/invoice/templates/classic-ledger/components/classic-ledger-closing.tsx": "F2EED5961A1053EC6EA001F96577C3A630CA5954056C1A71AFF49823EA9DDC44"
+  }
+}
